@@ -89,3 +89,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updated metadata description to 'A public diary for yourself and others.'
 
+## [0.0.6] - 2024
+
+### Added
+- Automatic profile loading for usernames
+- Show logged-in user's username above Sign button with handwriting animation
+
+### Changed
+- Date format in modal header shows weekday and abbreviated month
+- Username styling with signature-style handwriting font
+
+### Fixed
+- Missing image hostnames in next.config.js
+- Profile loading with proper relay hints
+
+### Refactored
+- Removed user avatars from note components
+- Improved modal header layout and date positioning
+
