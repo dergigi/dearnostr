@@ -65,7 +65,7 @@ export default function NoteModal({ note, onClose }: NoteModalProps) {
           </a>
           <button
             onClick={onClose}
-            className="text-amber-600 hover:text-amber-800 transition-colors p-2 hover:bg-amber-100 rounded-full"
+            className="text-amber-700 hover:text-amber-900 transition-colors p-2 hover:bg-amber-100 rounded-full"
             aria-label="Close"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
