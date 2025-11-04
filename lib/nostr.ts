@@ -1,5 +1,6 @@
 import { EventStore } from "applesauce-core";
 import { EventFactory } from "applesauce-factory";
+import { createAddressLoader } from "applesauce-loaders/loaders";
 import { RelayPool } from "applesauce-relay";
 import { ExtensionSigner, ISigner } from "applesauce-signers";
 import { DEFAULT_RELAYS } from "./constants";
@@ -7,6 +8,16 @@ import { DEFAULT_RELAYS } from "./constants";
 // Create singleton instances
 export const pool = new RelayPool();
 export const eventStore = new EventStore();
+
+// Create address loader for automatically fetching profiles and other replaceable events
+const addressLoader = createAddressLoader(pool, {
+  eventStore,
+  lookupRelays: DEFAULT_RELAYS,
+});
+
+// Assign loaders to event store so profiles are automatically fetched when requested
+eventStore.addressableLoader = addressLoader;
+eventStore.replaceableLoader = addressLoader;
 
 // Relays are created lazily when accessed via pool.relay(url)
 // No need to pre-initialize them

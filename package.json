@@ -12,6 +12,7 @@
   "dependencies": {
     "applesauce-core": "^3.0.0",
     "applesauce-factory": "^3.0.0",
+    "applesauce-loaders": "^3.0.0",
     "applesauce-react": "^3.0.0",
     "applesauce-relay": "^3.0.0",
     "applesauce-signers": "^3.0.0",
