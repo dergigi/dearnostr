@@ -3,7 +3,7 @@
 import { NoteBlueprint } from "applesauce-factory/blueprints";
 import { getFactory, publishEvent } from "@/lib/nostr";
 import { DEAR_NOSTR_PREFIX, DEAR_NOSTR_HASHTAG } from "@/lib/constants";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 export default function PostForm({
   onPostSuccess,
@@ -13,6 +13,7 @@ export default function PostForm({
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,22 +52,35 @@ export default function PostForm({
     }
   };
 
+  const displayValue = `${DEAR_NOSTR_PREFIX}${content}`;
+
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
-    // Ensure "Dear Nostr" prefix is always present
-    if (value.startsWith(DEAR_NOSTR_PREFIX)) {
-      setContent(value.slice(DEAR_NOSTR_PREFIX.length).trim());
-    } else {
-      setContent(value);
+    
+    // Prevent deletion of the prefix
+    if (value.length < DEAR_NOSTR_PREFIX.length || !value.startsWith(DEAR_NOSTR_PREFIX)) {
+      // Restore the prefix and move cursor to start of content area
+      const newCursorPos = DEAR_NOSTR_PREFIX.length;
+      setContent("");
+      // Use setTimeout to ensure cursor is set after React updates
+      setTimeout(() => {
+        if (textareaRef.current) {
+          textareaRef.current.setSelectionRange(newCursorPos, newCursorPos);
+        }
+      }, 0);
+      return;
     }
+    
+    // Extract content after prefix - cursor position will be preserved naturally by React
+    const newContent = value.slice(DEAR_NOSTR_PREFIX.length);
+    setContent(newContent);
   };
-
-  const displayValue = `${DEAR_NOSTR_PREFIX}${content}`;
 
   return (
     <form onSubmit={handleSubmit} className="w-full">
       <div className="mb-4">
         <textarea
+          ref={textareaRef}
           value={displayValue}
           onChange={handleInputChange}
           placeholder={`${DEAR_NOSTR_PREFIX}...`}
