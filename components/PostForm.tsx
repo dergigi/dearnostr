@@ -29,14 +29,18 @@ export default function PostForm({
     try {
       const factory = getFactory();
       
-      // Construct the full content: "Dear Nostr,\n\n" + user content + hashtag
-      const fullContent = `${DEAR_NOSTR_PREFIX}${content.trim()} #${DEAR_NOSTR_HASHTAG}`;
+      // Construct the full content without the hashtag in the body
+      const fullContent = `${DEAR_NOSTR_PREFIX}${content.trim()}`;
       
       // Create the note event
       const unsignedEvent = await factory.create(NoteBlueprint, fullContent);
       
+      // Add the 't' tag for the hashtag (lowercase as per NIP-24)
+      const tags = [...unsignedEvent.tags, ["t", DEAR_NOSTR_HASHTAG.toLowerCase()]];
+      const eventWithTag = { ...unsignedEvent, tags };
+      
       // Sign the event (factory will use the signer if available)
-      const signedEvent = await factory.sign(unsignedEvent);
+      const signedEvent = await factory.sign(eventWithTag);
       
       // Publish to relays
       await publishEvent(signedEvent);
