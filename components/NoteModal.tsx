@@ -53,7 +53,7 @@ export default function NoteModal({ note, onClose }: NoteModalProps) {
         className="relative bg-amber-50 rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto z-10 border border-amber-200"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="sticky top-0 bg-amber-50 border-b border-amber-200 px-6 py-4 flex items-center justify-end gap-4 rounded-t-lg">
+        <div className="sticky top-0 bg-amber-50 border-b border-amber-200 px-6 py-4 flex items-center justify-between gap-4 rounded-t-lg">
           <a
             href={`https://nostr.eu/e/${note.id}`}
             target="_blank"
