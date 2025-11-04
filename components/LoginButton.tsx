@@ -213,7 +213,7 @@ export default function LoginButton({
       
       {!extensionAvailable && !unlocking && !unlocked && (
         <p className="text-sm text-amber-700 text-center max-w-md px-4">
-          <ExtensionInstallMessage message="Install a nostr extension like Alby or nos2x to unlock the diary." />
+          <ExtensionInstallMessage message="No signer found. Install a nostr extension like Alby or nos2x to unlock the diary." />
         </p>
       )}
       {error && (
