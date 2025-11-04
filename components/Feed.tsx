@@ -5,7 +5,7 @@ import { onlyEvents } from "applesauce-relay";
 import { useObservableMemo } from "applesauce-react/hooks";
 import { pool, eventStore } from "@/lib/nostr";
 import { DEFAULT_RELAYS, DEAR_NOSTR_PREFIX, DEAR_NOSTR_HASHTAG } from "@/lib/constants";
-import { merge, map } from "rxjs";
+import { merge, map, startWith } from "rxjs";
 import NoteCard from "./NoteCard";
 
 export default function Feed() {
@@ -29,7 +29,9 @@ export default function Feed() {
         return timeline.filter((event) =>
           event.content.trim().startsWith(DEAR_NOSTR_PREFIX)
         );
-      })
+      }),
+      map((timeline) => [...timeline]), // Create new array reference for React
+      startWith([]) // Emit empty array initially so loading state resolves
     );
   }, []);
 
