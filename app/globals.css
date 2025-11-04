@@ -21,6 +21,28 @@
   letter-spacing: 0.05em;
 }
 
+/* Handwriting animation for signature */
+@keyframes writeSignature {
+  0% {
+    opacity: 0.2;
+    transform: rotate(-1deg) scale(0.95);
+    filter: blur(1px);
+  }
+  50% {
+    transform: rotate(-0.5deg) scale(1.02);
+    filter: blur(0.5px);
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(-1deg) scale(1);
+    filter: blur(0);
+  }
+}
+
+.signature-writing {
+  animation: writeSignature 1.2s ease-out forwards;
+}
+
 /* Lined paper background pattern */
 .lined-paper {
   background-image: 
