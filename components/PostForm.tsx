@@ -145,30 +145,51 @@ export default function PostForm({
         className="absolute bottom-0 right-0 w-8 h-8 transition-opacity duration-300"
         style={{ opacity: circleOpacity }}
       >
-        <svg className="w-8 h-8 transform -rotate-90" viewBox="0 0 32 32">
-          {/* Background circle */}
-          <circle
-            cx="16"
-            cy="16"
-            r={circleRadius}
-            fill="none"
-            stroke="rgba(139, 120, 93, 0.2)"
-            strokeWidth="2"
-          />
-          {/* Progress circle */}
-          <circle
-            cx="16"
-            cy="16"
-            r={circleRadius}
-            fill="none"
-            stroke={circleColor}
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeDasharray={circumference}
-            strokeDashoffset={strokeDashoffset}
-            className="transition-all duration-300"
-          />
-        </svg>
+        {isAbove420 ? (
+          // Full circle: filled red circle with white X
+          <svg className="w-8 h-8" viewBox="0 0 32 32">
+            <circle
+              cx="16"
+              cy="16"
+              r="14"
+              fill="rgb(220 38 38)"
+              className="transition-all duration-300"
+            />
+            <path
+              d="M10 10 L22 22 M22 10 L10 22"
+              stroke="white"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        ) : (
+          // Progress circle
+          <svg className="w-8 h-8 transform -rotate-90" viewBox="0 0 32 32">
+            {/* Background circle */}
+            <circle
+              cx="16"
+              cy="16"
+              r={circleRadius}
+              fill="none"
+              stroke="rgba(139, 120, 93, 0.2)"
+              strokeWidth="2"
+            />
+            {/* Progress circle */}
+            <circle
+              cx="16"
+              cy="16"
+              r={circleRadius}
+              fill="none"
+              stroke={circleColor}
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeDasharray={circumference}
+              strokeDashoffset={strokeDashoffset}
+              className="transition-all duration-300"
+            />
+          </svg>
+        )}
       </div>
     </form>
   );
