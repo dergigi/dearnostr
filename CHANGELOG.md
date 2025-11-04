@@ -36,3 +36,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Set up ESLint and fixed linting issues
 - Added cursor rules from boris project
 
+## [0.0.2] - 2024
+
+### Added
+- Padlock unlock animation to login button
+- Vercel deployment configuration
+
+### Changed
+- Textarea styled to look like diary page
+- Post button replaced with Sign button
+
+### Fixed
+- Padlock shackle rotation around correct attachment point
+- Extension detection to handle async extension loading
+- TypeScript definitions for window.nostr
+- Added required error and not-found components for Next.js
+
+### Refactored
+- Simplified extension detection logic
+
+### Changed (Development)
+- Excluded applesauce directory from build processes and git
+
+## [0.0.3] - 2024
+
+### Added
+- Visual character indicators with border and progress circle
+- Progressive opacity to progress circle
+- Animated transformation when character limit reached
+- Button disabled when over 420 characters
+
+### Fixed
+- Progress circle shows only when above 60 characters
+- Full opacity reached at 210 characters instead of 420
+- Removed unnecessary transform-origin from SVG circle
+
+## [0.0.4] - 2024
+
+### Added
+- Favicon and icon assets
+- OpenGraph metadata with social preview image
+- Twitter card metadata
+
+### Changed
+- Updated metadata description to include #DearNostr hashtag
+
