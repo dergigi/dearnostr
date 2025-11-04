@@ -4,6 +4,7 @@ import { getDisplayName, getProfilePicture, getSeenRelays } from "applesauce-cor
 import { eventStore } from "@/lib/nostr";
 import { NostrEvent } from "nostr-tools";
 import { useObservableMemo } from "applesauce-react/hooks";
+import { tap } from "rxjs";
 import Image from "next/image";
 import { useEffect, useMemo } from "react";
 
@@ -34,7 +35,23 @@ export default function FloatingNote({ note, topPosition, duration, delay, onCli
         relays: relays || [],
         hasRelays: !!relays && relays.length > 0,
       });
-      return eventStore.profile({ pubkey: note.pubkey, relays });
+      
+      const profileObservable = eventStore.profile({ pubkey: note.pubkey, relays });
+      
+      // Use shareReplay to log emissions without creating multiple subscriptions
+      // This will log the first emission which is important for debugging
+      return profileObservable.pipe(
+        tap((value) => {
+          console.log("[ProfileLoader] FloatingNote - Observable emitted:", {
+            pubkey: note.pubkey.slice(0, 8) + "...",
+            value: value ? { name: value.name, display_name: value.display_name, hasData: true } : null,
+            type: typeof value,
+            isUndefined: value === undefined,
+            isNull: value === null,
+            timestamp: new Date().toISOString(),
+          });
+        })
+      );
     },
     [note.pubkey, seenRelays?.size]
   );
