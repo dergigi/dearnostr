@@ -1,0 +1,32 @@
+{
+  "name": "dearnostr",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "applesauce-core": "workspace:^",
+    "applesauce-factory": "workspace:^",
+    "applesauce-react": "workspace:^",
+    "applesauce-relay": "workspace:^",
+    "applesauce-signers": "workspace:^",
+    "next": "^14.2.0",
+    "nostr-tools": "^2.15.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "rxjs": "^7.8.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.13",
+    "typescript": "^5"
+  }
+}
