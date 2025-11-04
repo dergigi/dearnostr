@@ -112,9 +112,7 @@ export default function LoginButton({
       setUnlocking(false);
       setUnlocked(false);
       if (err instanceof ExtensionMissingError) {
-        setError(
-          <ExtensionInstallMessage message="Install a nostr extension like Alby or nos2x to unlock the diary." />
-        );
+        setError(<ExtensionInstallMessage message={EXTENSION_INSTALL_MESSAGE} />);
       } else {
         setError("Failed to connect. Please try again.");
       }
