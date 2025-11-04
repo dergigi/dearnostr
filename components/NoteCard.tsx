@@ -5,6 +5,7 @@ import { eventStore } from "@/lib/nostr";
 import { NostrEvent } from "nostr-tools";
 import { useObservableMemo } from "applesauce-react/hooks";
 import { useMemo } from "react";
+import Image from "next/image";
 
 export default function NoteCard({ note }: { note: NostrEvent }) {
   const profile = useObservableMemo(
@@ -27,9 +28,11 @@ export default function NoteCard({ note }: { note: NostrEvent }) {
     <div className="border-b border-gray-100 py-5 px-6 hover:bg-gray-50 transition-colors">
       <div className="flex items-start gap-4">
         <div className="flex-shrink-0">
-          <img
+          <Image
             src={avatarUrl}
             alt={displayName}
+            width={48}
+            height={48}
             className="w-12 h-12 rounded-full ring-2 ring-gray-100"
           />
         </div>

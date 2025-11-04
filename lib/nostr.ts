@@ -1,13 +1,13 @@
 import { EventStore } from "applesauce-core";
 import { EventFactory } from "applesauce-factory";
 import { RelayPool } from "applesauce-relay";
-import { ExtensionSigner } from "applesauce-signers";
+import { ExtensionSigner, ISigner } from "applesauce-signers";
 import { DEFAULT_RELAYS } from "./constants";
 
 // Extend Window interface to include nostr property
 declare global {
   interface Window {
-    nostr?: any;
+    nostr?: ISigner;
   }
 }
 
