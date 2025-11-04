@@ -15,10 +15,8 @@ declare global {
 export const pool = new RelayPool();
 export const eventStore = new EventStore();
 
-// Initialize default relays
-DEFAULT_RELAYS.forEach((relay) => {
-  pool.add(relay);
-});
+// Relays are created lazily when accessed via pool.relay(url)
+// No need to pre-initialize them
 
 // Create factory with extension signer
 let signer: ExtensionSigner | null = null;
