@@ -6,3 +6,6 @@ export const DEFAULT_RELAYS = [
 
 export const DEAR_NOSTR_PREFIX = "Dear Nostr,\n\n";
 export const DEAR_NOSTR_HASHTAG = "DearNostr";
+
+export const ALBY_EXTENSION_URL = "https://getalby.com/alby-extension";
+export const NOS2X_EXTENSION_URL = "https://github.com/fiatjaf/nos2x";

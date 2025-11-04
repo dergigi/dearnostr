@@ -2,7 +2,8 @@
 
 import { ExtensionSigner, ExtensionMissingError } from "applesauce-signers";
 import { getSigner, updateFactorySigner } from "@/lib/nostr";
-import { useEffect, useState } from "react";
+import { ALBY_EXTENSION_URL, NOS2X_EXTENSION_URL } from "@/lib/constants";
+import { useEffect, useState, ReactNode } from "react";
 
 export default function LoginButton({
   onLogin,
@@ -11,11 +12,48 @@ export default function LoginButton({
 }) {
   const [extensionAvailable, setExtensionAvailable] = useState(false);
   const [pubkey, setPubkey] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ReactNode | null>(null);
   const [loading, setLoading] = useState(false);
   const [unlocking, setUnlocking] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
   const [showConnectionStatus, setShowConnectionStatus] = useState(false);
+
+  const ExtensionInstallMessage = ({ message }: { message: string }) => {
+    const parts = message.split(/(Alby|nos2x)/);
+    return (
+      <>
+        {parts.map((part, index) => {
+          if (part === "Alby") {
+            return (
+              <a
+                key={index}
+                href={ALBY_EXTENSION_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-amber-900"
+              >
+                Alby
+              </a>
+            );
+          }
+          if (part === "nos2x") {
+            return (
+              <a
+                key={index}
+                href={NOS2X_EXTENSION_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-amber-900"
+              >
+                nos2x
+              </a>
+            );
+          }
+          return <span key={index}>{part}</span>;
+        })}
+      </>
+    );
+  };
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -42,7 +80,9 @@ export default function LoginButton({
 
   const handleLogin = async () => {
     if (!window.nostr) {
-      setError("Nostr extension not found. Please install a Nostr extension like Alby or nos2x.");
+      setError(
+        <ExtensionInstallMessage message="Nostr extension not found. Please install a Nostr extension like Alby or nos2x." />
+      );
       return;
     }
 
@@ -74,7 +114,9 @@ export default function LoginButton({
       setUnlocking(false);
       setUnlocked(false);
       if (err instanceof ExtensionMissingError) {
-        setError("Extension not available. Please install a Nostr extension.");
+        setError(
+          <ExtensionInstallMessage message="Extension not available. Please install a Nostr extension like Alby or nos2x." />
+        );
       } else {
         setError("Failed to connect. Please try again.");
       }
@@ -171,7 +213,7 @@ export default function LoginButton({
       
       {!extensionAvailable && !unlocking && !unlocked && (
         <p className="text-sm text-amber-700 text-center max-w-md px-4">
-          Nostr extension not detected. Please install a Nostr extension like Alby or nos2x to continue.
+          <ExtensionInstallMessage message="Nostr extension not detected. Please install a Nostr extension like Alby or nos2x to continue." />
         </p>
       )}
       {error && (
