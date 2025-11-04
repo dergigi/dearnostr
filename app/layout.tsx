@@ -3,7 +3,7 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Dear Nostr',
-  description: 'A clean, minimal Nostr client for Dear Nostr posts',
+  description: 'A clean, minimal Nostr client for #DearNostr posts',
   icons: {
     icon: [
       { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
@@ -15,6 +15,25 @@ export const metadata: Metadata = {
     ],
   },
   manifest: '/site.webmanifest',
+  openGraph: {
+    title: 'Dear Nostr',
+    description: 'A clean, minimal Nostr client for #DearNostr posts',
+    type: 'website',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Dear Nostr',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Dear Nostr',
+    description: 'A clean, minimal Nostr client for #DearNostr posts',
+    images: ['/og-image.png'],
+  },
 }
 
 export default function RootLayout({
