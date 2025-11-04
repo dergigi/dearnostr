@@ -41,26 +41,26 @@ export default function NoteModal({ note, onClose }: NoteModalProps) {
       
       {/* Modal */}
       <div
-        className="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto z-10"
+        className="relative bg-amber-50 rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto z-10 border border-amber-200"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl">
+        <div className="sticky top-0 bg-amber-50 border-b border-amber-200 px-6 py-4 flex items-center justify-between rounded-t-lg">
           <div className="flex items-center gap-3">
             <Image
               src={avatarUrl}
               alt={displayName}
               width={40}
               height={40}
-              className="w-10 h-10 rounded-full"
+              className="w-10 h-10 rounded-full ring-2 ring-amber-200"
             />
             <div>
-              <div className="font-semibold text-gray-900">{displayName}</div>
-              <div className="text-xs text-gray-500">{timestamp}</div>
+              <div className="font-semibold text-amber-900">{displayName}</div>
+              <div className="text-xs text-amber-700">{timestamp}</div>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-full"
+            className="text-amber-600 hover:text-amber-800 transition-colors p-2 hover:bg-amber-100 rounded-full"
             aria-label="Close"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -70,7 +70,7 @@ export default function NoteModal({ note, onClose }: NoteModalProps) {
         </div>
         
         <div className="p-6">
-          <p className="text-gray-800 leading-relaxed whitespace-pre-wrap break-words">
+          <p className="text-amber-900 leading-relaxed whitespace-pre-wrap break-words">
             {note.content}
           </p>
         </div>

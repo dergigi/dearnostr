@@ -65,7 +65,7 @@ export default function PostForm({
   return (
     <form onSubmit={handleSubmit} className="w-full">
       <div className="mb-4">
-        <div className="mb-2 text-gray-700 font-medium">
+        <div className="mb-2 text-amber-900 font-semibold">
           {DEAR_NOSTR_PREFIX}
         </div>
         <textarea
@@ -73,16 +73,16 @@ export default function PostForm({
           value={content}
           onChange={(e) => setContent(e.target.value)}
           disabled={loading}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none disabled:bg-gray-50 disabled:cursor-not-allowed text-gray-900 placeholder-gray-400"
+          className="w-full px-4 py-3 border border-amber-300 bg-amber-50/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 resize-none disabled:bg-amber-100/50 disabled:cursor-not-allowed text-amber-900 placeholder-amber-600"
           rows={4}
         />
-        <div className="mt-2 text-xs text-gray-400">
+        <div className="mt-2 text-xs text-amber-700">
           {totalLength} characters
         </div>
       </div>
       
       {error && (
-        <div className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-2">
+        <div className="mb-4 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-2">
           {error}
         </div>
       )}
@@ -90,7 +90,7 @@ export default function PostForm({
       <button
         type="submit"
         disabled={loading || !content.trim()}
-        className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg font-medium shadow-sm hover:shadow transition-all duration-200"
+        className="w-full px-6 py-3 bg-amber-700 hover:bg-amber-800 disabled:bg-amber-300 disabled:cursor-not-allowed text-amber-50 rounded-lg font-semibold shadow-sm hover:shadow transition-all duration-200"
       >
         {loading ? "Posting..." : "Post"}
       </button>

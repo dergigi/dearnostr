@@ -53,7 +53,7 @@ export default function FloatingNote({ note, topPosition, duration, delay, onCli
       } as React.CSSProperties & { '--drift-y': string; '--drift-rotate': string; '--rotation': string }}
     >
       <div
-        className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4 max-w-xs w-64 border border-white/50 cursor-pointer hover:bg-white/95 transition-all hover:shadow-xl"
+        className="bg-amber-50/95 backdrop-blur-sm rounded-lg shadow-md p-4 max-w-xs w-64 border border-amber-200/60 cursor-pointer hover:bg-amber-50 transition-all hover:shadow-lg"
         onClick={onClick}
       >
         <div className="flex items-start gap-3 mb-2">
@@ -62,13 +62,13 @@ export default function FloatingNote({ note, topPosition, duration, delay, onCli
             alt={displayName}
             width={32}
             height={32}
-            className="w-8 h-8 rounded-full flex-shrink-0"
+            className="w-8 h-8 rounded-full flex-shrink-0 ring-2 ring-amber-200"
           />
           <div className="flex-1 min-w-0">
-            <div className="text-xs font-medium text-gray-700 truncate">{displayName}</div>
+            <div className="text-xs font-semibold text-amber-900 truncate">{displayName}</div>
           </div>
         </div>
-        <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap break-words line-clamp-6">
+        <p className="text-sm text-amber-900 leading-relaxed whitespace-pre-wrap break-words line-clamp-6">
           {note.content}
         </p>
       </div>

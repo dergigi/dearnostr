@@ -112,10 +112,10 @@ export default function Feed() {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 flex justify-center items-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <div className="fixed inset-0 flex justify-center items-center lined-paper">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-          <div className="text-sm text-gray-500">Loading notes...</div>
+          <div className="w-8 h-8 border-4 border-amber-700 border-t-transparent rounded-full animate-spin"></div>
+          <div className="text-sm text-amber-800">Loading notes...</div>
         </div>
       </div>
     );
@@ -123,10 +123,10 @@ export default function Feed() {
 
   if (eventsArray.length === 0) {
     return (
-      <div className="fixed inset-0 flex justify-center items-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <div className="fixed inset-0 flex justify-center items-center lined-paper">
         <div className="text-center">
-          <div className="text-gray-400 text-lg mb-2">No notes yet.</div>
-          <div className="text-sm text-gray-500">The wind is still...</div>
+          <div className="text-amber-700 text-lg mb-2">No notes yet.</div>
+          <div className="text-sm text-amber-600">The wind is still...</div>
         </div>
       </div>
     );
@@ -134,7 +134,7 @@ export default function Feed() {
 
   return (
     <>
-      <div className="fixed inset-0 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <div className="fixed inset-0 overflow-hidden lined-paper">
         {loopingEvents.map((noteData, index) => (
           <FloatingNote
             key={`${noteData.event.id}-${index}`}

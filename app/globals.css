@@ -1,6 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Crimson Text', serif;
+  }
+}
+
+/* Lined paper background pattern */
+.lined-paper {
+  background-image: 
+    repeating-linear-gradient(
+      transparent,
+      transparent 31px,
+      rgba(139, 120, 93, 0.1) 31px,
+      rgba(139, 120, 93, 0.1) 32px
+    );
+  background-color: #FAF8F3;
+}
 
 @keyframes drift {
   0% {
