@@ -81,7 +81,7 @@ export default function LoginButton({
   const handleLogin = async () => {
     if (!window.nostr) {
       setError(
-        <ExtensionInstallMessage message="Nostr extension not found. Please install a Nostr extension like Alby or nos2x." />
+        <ExtensionInstallMessage message="Install a nostr extension like Alby or nos2x to unlock the diary." />
       );
       return;
     }
@@ -115,7 +115,7 @@ export default function LoginButton({
       setUnlocked(false);
       if (err instanceof ExtensionMissingError) {
         setError(
-          <ExtensionInstallMessage message="Extension not available. Please install a Nostr extension like Alby or nos2x." />
+          <ExtensionInstallMessage message="Install a nostr extension like Alby or nos2x to unlock the diary." />
         );
       } else {
         setError("Failed to connect. Please try again.");
@@ -213,7 +213,7 @@ export default function LoginButton({
       
       {!extensionAvailable && !unlocking && !unlocked && (
         <p className="text-sm text-amber-700 text-center max-w-md px-4">
-          <ExtensionInstallMessage message="Nostr extension not detected. Please install a Nostr extension like Alby or nos2x to continue." />
+          <ExtensionInstallMessage message="Install a nostr extension like Alby or nos2x to unlock the diary." />
         </p>
       )}
       {error && (
