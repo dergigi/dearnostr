@@ -28,8 +28,8 @@ export default function PostForm({
     try {
       const factory = getFactory();
       
-      // Construct the full content: "Dear Nostr" + user content + hashtag
-      const fullContent = `${DEAR_NOSTR_PREFIX} ${content.trim()} #${DEAR_NOSTR_HASHTAG}`;
+      // Construct the full content: "Dear Nostr,\n\n" + user content + hashtag
+      const fullContent = `${DEAR_NOSTR_PREFIX}${content.trim()} #${DEAR_NOSTR_HASHTAG}`;
       
       // Create the note event
       const unsignedEvent = await factory.create(NoteBlueprint, fullContent);
@@ -61,7 +61,7 @@ export default function PostForm({
     }
   };
 
-  const displayValue = `${DEAR_NOSTR_PREFIX} ${content}`;
+  const displayValue = `${DEAR_NOSTR_PREFIX}${content}`;
 
   return (
     <form onSubmit={handleSubmit} className="w-full">
@@ -69,7 +69,7 @@ export default function PostForm({
         <textarea
           value={displayValue}
           onChange={handleInputChange}
-          placeholder={`${DEAR_NOSTR_PREFIX} ...`}
+          placeholder={`${DEAR_NOSTR_PREFIX}...`}
           disabled={loading}
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none disabled:bg-gray-50 disabled:cursor-not-allowed text-gray-900 placeholder-gray-400"
           rows={4}
