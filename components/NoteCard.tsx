@@ -57,14 +57,14 @@ export default function NoteCard({ note }: { note: NostrEvent }) {
     <div className="border-b border-gray-100 py-5 px-6 hover:bg-gray-50 transition-colors">
       <div className="flex items-start gap-4">
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-2">
+          <p className="text-sm text-gray-800 leading-relaxed break-words whitespace-pre-wrap mb-2">
+            {note.content}
+          </p>
+          <div className="flex items-center gap-2">
             <span className="font-semibold text-sm text-gray-900">{displayName}</span>
             <span className="text-xs text-gray-400">·</span>
             <span className="text-xs text-gray-400">{timestamp}</span>
           </div>
-          <p className="text-sm text-gray-800 leading-relaxed break-words whitespace-pre-wrap">
-            {note.content}
-          </p>
         </div>
       </div>
     </div>

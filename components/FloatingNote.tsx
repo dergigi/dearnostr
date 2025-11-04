@@ -102,14 +102,12 @@ export default function FloatingNote({ note, topPosition, duration, delay, onCli
         className="bg-amber-50/95 backdrop-blur-sm rounded-lg shadow-md p-4 max-w-xs w-64 border border-amber-200/60 cursor-pointer hover:bg-amber-50 transition-all hover:shadow-lg"
         onClick={onClick}
       >
-        <div className="flex items-start gap-3 mb-2">
-          <div className="flex-1 min-w-0">
-            <div className="text-xs font-semibold text-amber-900 truncate">{displayName}</div>
-          </div>
-        </div>
-        <p className="text-sm text-amber-900 leading-relaxed whitespace-pre-wrap break-words line-clamp-6">
+        <p className="text-sm text-amber-900 leading-relaxed whitespace-pre-wrap break-words line-clamp-6 mb-2">
           {note.content}
         </p>
+        <div className="text-xs font-semibold text-amber-900 truncate">
+          {displayName}
+        </div>
       </div>
     </div>
   );
