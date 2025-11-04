@@ -64,7 +64,7 @@ export default function FloatingNote({ note, topPosition, duration, delay }: Flo
             <div className="text-xs font-medium text-gray-700 truncate">{displayName}</div>
           </div>
         </div>
-        <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap break-words line-clamp-4">
+        <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap break-words">
           {note.content}
         </p>
       </div>
