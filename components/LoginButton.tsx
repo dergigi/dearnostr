@@ -4,7 +4,7 @@ import { ExtensionSigner, ExtensionMissingError } from "applesauce-signers";
 import { getSigner, updateFactorySigner } from "@/lib/nostr";
 import { ALBY_EXTENSION_URL, NOS2X_EXTENSION_URL, KEYCHAT_URL, AMBER_URL, GRAPHENE_URL, EXTENSION_INSTALL_MESSAGE, EXTENSION_INSTALL_MESSAGE_ANDROID, EXTENSION_INSTALL_MESSAGE_IOS } from "@/lib/constants";
 import { isAndroid, isIOS } from "@/lib/utils";
-import { useEffect, useState, ReactNode, useMemo } from "react";
+import { useEffect, useState, ReactNode } from "react";
 
 export default function LoginButton({
   onLogin,
