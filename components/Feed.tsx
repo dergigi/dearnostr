@@ -64,9 +64,9 @@ export default function Feed() {
         console.log(`${DEBUG_PREFIX} Timeline updated, total events:`, timeline.length);
       }),
       map((timeline) => {
-        // Filter to only show notes that start with "Dear Nostr"
+        // Filter to only show notes that start with "Dear Nostr" (case-insensitive)
         const filtered = timeline.filter((event) =>
-          event.content.trim().startsWith(DEAR_NOSTR_PREFIX)
+          event.content.trim().toLowerCase().startsWith(DEAR_NOSTR_PREFIX.toLowerCase())
         );
         console.log(`${DEBUG_PREFIX} Filtered timeline: ${filtered.length}/${timeline.length} events match "Dear Nostr" prefix`);
         return filtered;
