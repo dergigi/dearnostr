@@ -38,8 +38,8 @@ export default function NoteModal({ note, onClose }: NoteModalProps) {
     [note?.pubkey || '', seenRelays?.size]
   );
 
-  const timestamp = useMemo(
-    () => note ? new Date(note.created_at * 1000).toLocaleString() : '',
+  const day = useMemo(
+    () => note ? new Date(note.created_at * 1000).toLocaleDateString('en-US', { month: 'long', day: 'numeric' }) : '',
     [note]
   );
 
@@ -83,7 +83,10 @@ export default function NoteModal({ note, onClose }: NoteModalProps) {
         className="relative bg-amber-50 rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto z-10 border border-amber-200"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="sticky top-0 bg-amber-50 border-b border-amber-200 px-6 py-4 flex items-center justify-end rounded-t-lg">
+        <div className="sticky top-0 bg-amber-50 border-b border-amber-200 px-6 py-4 flex items-center justify-between rounded-t-lg">
+          <div className="text-xs text-amber-700">
+            {day}
+          </div>
           <button
             onClick={onClose}
             className="text-amber-600 hover:text-amber-800 transition-colors p-2 hover:bg-amber-100 rounded-full"
@@ -101,8 +104,6 @@ export default function NoteModal({ note, onClose }: NoteModalProps) {
           </p>
           <div className="flex items-center gap-2">
             <span className="signature text-amber-900">{displayName}</span>
-            <span className="text-xs text-amber-700">·</span>
-            <span className="text-xs text-amber-700">{timestamp}</span>
           </div>
         </div>
       </div>
