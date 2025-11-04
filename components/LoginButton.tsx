@@ -2,8 +2,8 @@
 
 import { ExtensionSigner, ExtensionMissingError } from "applesauce-signers";
 import { getSigner, updateFactorySigner } from "@/lib/nostr";
-import { ALBY_EXTENSION_URL, NOS2X_EXTENSION_URL, KEYCHAT_URL, AMBER_URL, EXTENSION_INSTALL_MESSAGE, EXTENSION_INSTALL_MESSAGE_ANDROID } from "@/lib/constants";
-import { isAndroid } from "@/lib/utils";
+import { ALBY_EXTENSION_URL, NOS2X_EXTENSION_URL, KEYCHAT_URL, AMBER_URL, GRAPHENE_URL, EXTENSION_INSTALL_MESSAGE, EXTENSION_INSTALL_MESSAGE_ANDROID, EXTENSION_INSTALL_MESSAGE_IOS } from "@/lib/constants";
+import { isAndroid, isIOS } from "@/lib/utils";
 import { useEffect, useState, ReactNode, useMemo } from "react";
 
 export default function LoginButton({
@@ -21,7 +21,13 @@ export default function LoginButton({
   const [extensionMessage, setExtensionMessage] = useState(EXTENSION_INSTALL_MESSAGE);
 
   useEffect(() => {
-    setExtensionMessage(isAndroid() ? EXTENSION_INSTALL_MESSAGE_ANDROID : EXTENSION_INSTALL_MESSAGE);
+    if (isIOS()) {
+      setExtensionMessage(EXTENSION_INSTALL_MESSAGE_IOS);
+    } else if (isAndroid()) {
+      setExtensionMessage(EXTENSION_INSTALL_MESSAGE_ANDROID);
+    } else {
+      setExtensionMessage(EXTENSION_INSTALL_MESSAGE);
+    }
   }, []);
 
   const ExtensionInstallMessage = ({ message }: { message: string }) => {
@@ -30,9 +36,10 @@ export default function LoginButton({
       nos2x: NOS2X_EXTENSION_URL,
       Keychat: KEYCHAT_URL,
       Amber: AMBER_URL,
+      Graphene: GRAPHENE_URL,
     };
 
-    const parts = message.split(/(Alby|nos2x|Keychat|Amber)/i);
+    const parts = message.split(/(Alby|nos2x|Keychat|Amber|Graphene)/i);
     return (
       <>
         {parts.map((part, index) => {

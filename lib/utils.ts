@@ -33,3 +33,12 @@ export function isAndroid(): boolean {
   return /android/i.test(window.navigator.userAgent);
 }
 
+/**
+ * Detects if the current device is running iOS
+ * @returns true if iOS, false otherwise (or if SSR)
+ */
+export function isIOS(): boolean {
+  if (typeof window === "undefined") return false;
+  return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+}
+
