@@ -2,6 +2,7 @@
 
 import { getDisplayName, getSeenRelays } from "applesauce-core/helpers";
 import { eventStore } from "@/lib/nostr";
+import { stripEmojis } from "@/lib/utils";
 import { NostrEvent } from "nostr-tools";
 import { useObservableMemo } from "applesauce-react/hooks";
 import { tap } from "rxjs";
@@ -64,7 +65,8 @@ export default function FloatingNote({ note, topPosition, duration, delay, onCli
     });
   }, [profile, note.pubkey]);
 
-  const displayName = getDisplayName(profile, note.pubkey.slice(0, 6));
+  const displayNameRaw = getDisplayName(profile, note.pubkey.slice(0, 6));
+  const displayName = useMemo(() => stripEmojis(displayNameRaw), [displayNameRaw]);
   useEffect(() => {
     console.log("[ProfileLoader] FloatingNote - Display name calculated:", {
       pubkey: note.pubkey.slice(0, 8) + "...",

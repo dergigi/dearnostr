@@ -2,6 +2,7 @@
 
 import { getDisplayName, getSeenRelays } from "applesauce-core/helpers";
 import { eventStore } from "@/lib/nostr";
+import { stripEmojis } from "@/lib/utils";
 import { NostrEvent } from "nostr-tools";
 import { useObservableMemo } from "applesauce-react/hooks";
 import { useEffect, useMemo } from "react";
@@ -39,7 +40,8 @@ export default function NoteCard({ note }: { note: NostrEvent }) {
     });
   }, [profile, note.pubkey]);
 
-  const displayName = getDisplayName(profile, note.pubkey.slice(0, 8) + "...");
+  const displayNameRaw = getDisplayName(profile, note.pubkey.slice(0, 8) + "...");
+  const displayName = useMemo(() => stripEmojis(displayNameRaw), [displayNameRaw]);
   useEffect(() => {
     console.log("[ProfileLoader] NoteCard - Display name calculated:", {
       pubkey: note.pubkey.slice(0, 8) + "...",

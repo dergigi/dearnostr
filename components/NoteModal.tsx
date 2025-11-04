@@ -2,6 +2,7 @@
 
 import { getDisplayName, getSeenRelays } from "applesauce-core/helpers";
 import { eventStore } from "@/lib/nostr";
+import { stripEmojis } from "@/lib/utils";
 import { NostrEvent } from "nostr-tools";
 import { useObservableMemo } from "applesauce-react/hooks";
 import { useEffect, useMemo } from "react";
@@ -44,7 +45,8 @@ export default function NoteModal({ note, onClose }: NoteModalProps) {
 
   const displayName = useMemo(() => {
     if (!note) return '';
-    return getDisplayName(profile, note.pubkey.slice(0, 8) + "...");
+    const rawName = getDisplayName(profile, note.pubkey.slice(0, 8) + "...");
+    return stripEmojis(rawName);
   }, [profile, note]);
 
   useEffect(() => {
