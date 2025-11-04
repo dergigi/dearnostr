@@ -4,7 +4,7 @@ import { getDisplayName, getProfilePicture, getSeenRelays } from "applesauce-cor
 import { eventStore } from "@/lib/nostr";
 import { NostrEvent } from "nostr-tools";
 import { useObservableMemo } from "applesauce-react/hooks";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import Image from "next/image";
 
 interface NoteModalProps {
@@ -13,11 +13,40 @@ interface NoteModalProps {
 }
 
 export default function NoteModal({ note, onClose }: NoteModalProps) {
-  const seenRelays = useMemo(() => note ? getSeenRelays(note) : undefined, [note]);
+  const seenRelays = useMemo(() => {
+    if (!note) return undefined;
+    const relays = getSeenRelays(note);
+    console.log("[ProfileLoader] NoteModal - Extracted seen relays:", {
+      pubkey: note.pubkey.slice(0, 8) + "...",
+      seenRelays: relays ? Array.from(relays) : null,
+      noteId: note.id.slice(0, 8) + "...",
+    });
+    return relays;
+  }, [note]);
+
   const profile = useObservableMemo(
-    () => note ? eventStore.profile({ pubkey: note.pubkey, relays: seenRelays && Array.from(seenRelays) }) : undefined,
+    () => {
+      if (!note) return undefined;
+      const relays = seenRelays && Array.from(seenRelays);
+      console.log("[ProfileLoader] NoteModal - Requesting profile:", {
+        pubkey: note.pubkey.slice(0, 8) + "...",
+        relays: relays || [],
+        hasRelays: !!relays && relays.length > 0,
+      });
+      return eventStore.profile({ pubkey: note.pubkey, relays });
+    },
     [note?.pubkey || '', seenRelays?.size]
   );
+
+  useEffect(() => {
+    if (!note) return;
+    console.log("[ProfileLoader] NoteModal - Profile received:", {
+      pubkey: note.pubkey.slice(0, 8) + "...",
+      hasProfile: !!profile,
+      profileName: profile?.name || null,
+      profileDisplayName: profile?.display_name || null,
+    });
+  }, [profile, note?.pubkey]);
 
   const timestamp = useMemo(
     () => note ? new Date(note.created_at * 1000).toLocaleString() : '',
@@ -27,6 +56,14 @@ export default function NoteModal({ note, onClose }: NoteModalProps) {
   if (!note) return null;
 
   const displayName = getDisplayName(profile, note.pubkey.slice(0, 8) + "...");
+  useEffect(() => {
+    console.log("[ProfileLoader] NoteModal - Display name calculated:", {
+      pubkey: note.pubkey.slice(0, 8) + "...",
+      displayName,
+      hasProfile: !!profile,
+    });
+  }, [displayName, profile, note.pubkey]);
+
   const avatarUrl = getProfilePicture(
     profile,
     `https://robohash.org/${note.pubkey}.png`

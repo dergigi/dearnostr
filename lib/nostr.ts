@@ -19,6 +19,12 @@ const addressLoader = createAddressLoader(pool, {
 eventStore.addressableLoader = addressLoader;
 eventStore.replaceableLoader = addressLoader;
 
+console.log("[ProfileLoader] Address loader configured with lookup relays:", DEFAULT_RELAYS);
+console.log("[ProfileLoader] Event store loaders assigned:", {
+  hasAddressableLoader: !!eventStore.addressableLoader,
+  hasReplaceableLoader: !!eventStore.replaceableLoader,
+});
+
 // Relays are created lazily when accessed via pool.relay(url)
 // No need to pre-initialize them
 

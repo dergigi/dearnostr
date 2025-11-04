@@ -5,7 +5,7 @@ import { eventStore } from "@/lib/nostr";
 import { NostrEvent } from "nostr-tools";
 import { useObservableMemo } from "applesauce-react/hooks";
 import Image from "next/image";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 interface FloatingNoteProps {
   note: NostrEvent;
@@ -16,13 +16,46 @@ interface FloatingNoteProps {
 }
 
 export default function FloatingNote({ note, topPosition, duration, delay, onClick }: FloatingNoteProps) {
-  const seenRelays = useMemo(() => getSeenRelays(note), [note]);
+  const seenRelays = useMemo(() => {
+    const relays = getSeenRelays(note);
+    console.log("[ProfileLoader] FloatingNote - Extracted seen relays:", {
+      pubkey: note.pubkey.slice(0, 8) + "...",
+      seenRelays: relays ? Array.from(relays) : null,
+      noteId: note.id.slice(0, 8) + "...",
+    });
+    return relays;
+  }, [note]);
+
   const profile = useObservableMemo(
-    () => eventStore.profile({ pubkey: note.pubkey, relays: seenRelays && Array.from(seenRelays) }),
+    () => {
+      const relays = seenRelays && Array.from(seenRelays);
+      console.log("[ProfileLoader] FloatingNote - Requesting profile:", {
+        pubkey: note.pubkey.slice(0, 8) + "...",
+        relays: relays || [],
+        hasRelays: !!relays && relays.length > 0,
+      });
+      return eventStore.profile({ pubkey: note.pubkey, relays });
+    },
     [note.pubkey, seenRelays?.size]
   );
 
+  useEffect(() => {
+    console.log("[ProfileLoader] FloatingNote - Profile received:", {
+      pubkey: note.pubkey.slice(0, 8) + "...",
+      hasProfile: !!profile,
+      profileName: profile?.name || null,
+      profileDisplayName: profile?.display_name || null,
+    });
+  }, [profile, note.pubkey]);
+
   const displayName = getDisplayName(profile, note.pubkey.slice(0, 6));
+  useEffect(() => {
+    console.log("[ProfileLoader] FloatingNote - Display name calculated:", {
+      pubkey: note.pubkey.slice(0, 8) + "...",
+      displayName,
+      hasProfile: !!profile,
+    });
+  }, [displayName, profile, note.pubkey]);
   const avatarUrl = getProfilePicture(
     profile,
     `https://robohash.org/${note.pubkey}.png`
