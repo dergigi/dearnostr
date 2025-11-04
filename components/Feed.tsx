@@ -23,13 +23,18 @@ export default function Feed() {
     console.log(`${DEBUG_PREFIX} Creating subscriptions for ${DEFAULT_RELAYS.length} relays`);
     
     // Create subscriptions for each relay
+    const filter = {
+      kinds: [1],
+      "#t": [DEAR_NOSTR_HASHTAG.toLowerCase()], // Lowercase to match how posts are tagged (NIP-24)
+      limit: 100,
+    };
+    console.log(`${DEBUG_PREFIX} Using filter:`, JSON.stringify(filter, null, 2));
+    
     const subscriptions = DEFAULT_RELAYS.map((relayUrl) => {
       console.log(`${DEBUG_PREFIX} Creating subscription for relay:`, relayUrl);
-      const sub = pool.relay(relayUrl).subscription({
-        kinds: [1],
-        "#t": [DEAR_NOSTR_HASHTAG],
-        limit: 100,
-      });
+      const relay = pool.relay(relayUrl);
+      console.log(`${DEBUG_PREFIX} Relay instance for ${relayUrl}:`, relay);
+      const sub = relay.subscription(filter);
       console.log(`${DEBUG_PREFIX} Subscription created for ${relayUrl}:`, sub);
       return sub;
     });
