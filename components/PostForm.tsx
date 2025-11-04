@@ -136,7 +136,7 @@ export default function PostForm({
       )}
       
       {displayName && (
-        <div className="mb-3 text-right">
+        <div className="mb-3 text-left">
           <span className="signature text-amber-900">{displayName}</span>
         </div>
       )}
