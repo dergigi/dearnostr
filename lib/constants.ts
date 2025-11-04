@@ -15,4 +15,4 @@ export const GRAPHENE_URL = "https://grapheneos.org/";
 
 export const EXTENSION_INSTALL_MESSAGE = "Install a nostr extension like Alby or nos2x to unlock the diary.";
 export const EXTENSION_INSTALL_MESSAGE_ANDROID = "On Android? Use the Keychat browser with Amber.";
-export const EXTENSION_INSTALL_MESSAGE_IOS = "On iOS? Buy an Android and install Graphene.";
+export const EXTENSION_INSTALL_MESSAGE_IOS = "On iOS? Buy a new phone and install Graphene.";
