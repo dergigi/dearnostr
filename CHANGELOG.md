@@ -81,3 +81,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updated metadata description to include #DearNostr hashtag
 
+## [0.0.5] - 2024
+
+### Added
+- Avatar in note detail view is now clickable to open note on nostr.eu
+
+### Changed
+- Updated metadata description to 'A public diary for yourself and others.'
+
