@@ -3,7 +3,7 @@
 import { NoteBlueprint } from "applesauce-factory/blueprints";
 import { getFactory, publishEvent } from "@/lib/nostr";
 import { DEAR_NOSTR_PREFIX, DEAR_NOSTR_HASHTAG } from "@/lib/constants";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 export default function PostForm({
   onPostSuccess,
@@ -13,6 +13,11 @@ export default function PostForm({
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    textareaRef.current?.focus();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,6 +69,7 @@ export default function PostForm({
           {DEAR_NOSTR_PREFIX}
         </div>
         <textarea
+          ref={textareaRef}
           value={content}
           onChange={(e) => setContent(e.target.value)}
           disabled={loading}
