@@ -23,13 +23,6 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-gray-900 mb-3 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            Dear Nostr
-          </h1>
-          <p className="text-gray-600 text-lg">A clean, minimal client for Dear Nostr posts</p>
-        </div>
-
         {!pubkey ? (
           <div className="flex justify-center items-center min-h-[400px]">
             <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-200">
@@ -50,7 +43,6 @@ export default function Home() {
             )}
             
             <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
-              <h2 className="text-xl font-semibold mb-4 text-gray-900">Write a Dear Nostr post</h2>
               <PostForm onPostSuccess={handlePostSuccess} />
             </div>
 
