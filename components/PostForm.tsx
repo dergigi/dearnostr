@@ -82,6 +82,12 @@ export default function PostForm({
   const circumference = 2 * Math.PI * circleRadius;
   const strokeDashoffset = circumference - (progressPercentage / 100) * circumference;
 
+  // Calculate opacity: 20% at 60 chars or below, increases to 100% as chars increase
+  // Maps from 60 chars (0.2) to 420 chars (1.0)
+  const circleOpacity = totalLength <= 60 
+    ? 0.2 
+    : Math.min(1.0, 0.2 + ((totalLength - 60) / 360) * 0.8);
+
   return (
     <form onSubmit={handleSubmit} className="w-full relative">
       <div className="mb-4">
@@ -134,35 +140,36 @@ export default function PostForm({
         )}
       </button>
 
-      {/* Circular progress indicator - only show when above 60 chars */}
-      {totalLength > 60 && (
-        <div className="absolute bottom-0 right-0 w-8 h-8">
-          <svg className="w-8 h-8 transform -rotate-90" viewBox="0 0 32 32">
-            {/* Background circle */}
-            <circle
-              cx="16"
-              cy="16"
-              r={circleRadius}
-              fill="none"
-              stroke="rgba(139, 120, 93, 0.2)"
-              strokeWidth="2"
-            />
-            {/* Progress circle */}
-            <circle
-              cx="16"
-              cy="16"
-              r={circleRadius}
-              fill="none"
-              stroke={circleColor}
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeDasharray={circumference}
-              strokeDashoffset={strokeDashoffset}
-              className="transition-all duration-300"
-            />
-          </svg>
-        </div>
-      )}
+      {/* Circular progress indicator */}
+      <div 
+        className="absolute bottom-0 right-0 w-8 h-8 transition-opacity duration-300"
+        style={{ opacity: circleOpacity }}
+      >
+        <svg className="w-8 h-8 transform -rotate-90" viewBox="0 0 32 32">
+          {/* Background circle */}
+          <circle
+            cx="16"
+            cy="16"
+            r={circleRadius}
+            fill="none"
+            stroke="rgba(139, 120, 93, 0.2)"
+            strokeWidth="2"
+          />
+          {/* Progress circle */}
+          <circle
+            cx="16"
+            cy="16"
+            r={circleRadius}
+            fill="none"
+            stroke={circleColor}
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            strokeDashoffset={strokeDashoffset}
+            className="transition-all duration-300"
+          />
+        </svg>
+      </div>
     </form>
   );
 }
