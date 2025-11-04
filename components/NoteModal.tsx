@@ -18,17 +18,17 @@ export default function NoteModal({ note, onClose }: NoteModalProps) {
     [note?.pubkey || '']
   );
 
+  const timestamp = useMemo(
+    () => note ? new Date(note.created_at * 1000).toLocaleString() : '',
+    [note?.created_at]
+  );
+
   if (!note) return null;
 
   const displayName = getDisplayName(profile, note.pubkey.slice(0, 8) + "...");
   const avatarUrl = getProfilePicture(
     profile,
     `https://robohash.org/${note.pubkey}.png`
-  );
-
-  const timestamp = useMemo(
-    () => new Date(note.created_at * 1000).toLocaleString(),
-    [note.created_at]
   );
 
   return (
