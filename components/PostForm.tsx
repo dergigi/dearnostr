@@ -3,7 +3,7 @@
 import { NoteBlueprint } from "applesauce-factory/blueprints";
 import { getFactory, publishEvent } from "@/lib/nostr";
 import { DEAR_NOSTR_PREFIX, DEAR_NOSTR_HASHTAG } from "@/lib/constants";
-import { useState, useRef } from "react";
+import { useState } from "react";
 
 export default function PostForm({
   onPostSuccess,
@@ -13,7 +13,6 @@ export default function PostForm({
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +28,7 @@ export default function PostForm({
     try {
       const factory = getFactory();
       
-      // Construct the full content without the hashtag in the body
+      // Construct the full content by prepending the prefix to user input
       const fullContent = `${DEAR_NOSTR_PREFIX}${content.trim()}`;
       
       // Create the note event
@@ -56,44 +55,24 @@ export default function PostForm({
     }
   };
 
-  const displayValue = `${DEAR_NOSTR_PREFIX}${content}`;
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value;
-    
-    // Prevent deletion of the prefix
-    if (value.length < DEAR_NOSTR_PREFIX.length || !value.startsWith(DEAR_NOSTR_PREFIX)) {
-      // Restore the prefix and move cursor to start of content area
-      const newCursorPos = DEAR_NOSTR_PREFIX.length;
-      setContent("");
-      // Use setTimeout to ensure cursor is set after React updates
-      setTimeout(() => {
-        if (textareaRef.current) {
-          textareaRef.current.setSelectionRange(newCursorPos, newCursorPos);
-        }
-      }, 0);
-      return;
-    }
-    
-    // Extract content after prefix - cursor position will be preserved naturally by React
-    const newContent = value.slice(DEAR_NOSTR_PREFIX.length);
-    setContent(newContent);
-  };
+  const totalLength = DEAR_NOSTR_PREFIX.length + content.length;
 
   return (
     <form onSubmit={handleSubmit} className="w-full">
       <div className="mb-4">
+        <div className="mb-2 text-gray-700 font-medium">
+          {DEAR_NOSTR_PREFIX}
+        </div>
         <textarea
-          ref={textareaRef}
-          value={displayValue}
-          onChange={handleInputChange}
-          placeholder={`${DEAR_NOSTR_PREFIX}...`}
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="Write your message here..."
           disabled={loading}
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none disabled:bg-gray-50 disabled:cursor-not-allowed text-gray-900 placeholder-gray-400"
           rows={4}
         />
         <div className="mt-2 text-xs text-gray-400">
-          {displayValue.length} characters
+          {totalLength} characters
         </div>
       </div>
       
