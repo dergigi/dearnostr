@@ -18,9 +18,10 @@ export default function LoginButton({
   const [unlocking, setUnlocking] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
   const [showConnectionStatus, setShowConnectionStatus] = useState(false);
+  const [extensionMessage, setExtensionMessage] = useState(EXTENSION_INSTALL_MESSAGE);
 
-  const extensionMessage = useMemo(() => {
-    return isAndroid() ? EXTENSION_INSTALL_MESSAGE_ANDROID : EXTENSION_INSTALL_MESSAGE;
+  useEffect(() => {
+    setExtensionMessage(isAndroid() ? EXTENSION_INSTALL_MESSAGE_ANDROID : EXTENSION_INSTALL_MESSAGE);
   }, []);
 
   const ExtensionInstallMessage = ({ message }: { message: string }) => {
