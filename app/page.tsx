@@ -8,6 +8,7 @@ import Feed from "@/components/Feed";
 export default function Home() {
   const [pubkey, setPubkey] = useState<string>("");
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showFeed, setShowFeed] = useState(false);
 
   const handleLogin = (userPubkey: string) => {
     setPubkey(userPubkey);
@@ -15,6 +16,7 @@ export default function Home() {
 
   const handlePostSuccess = () => {
     setShowSuccess(true);
+    setShowFeed(true);
     setTimeout(() => {
       setShowSuccess(false);
     }, 3000);
@@ -46,7 +48,7 @@ export default function Home() {
               <PostForm onPostSuccess={handlePostSuccess} />
             </div>
 
-            <Feed />
+            {showFeed && <Feed />}
           </div>
         )}
       </div>
