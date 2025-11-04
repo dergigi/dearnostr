@@ -38,6 +38,16 @@ export default function NoteModal({ note, onClose }: NoteModalProps) {
     [note?.pubkey || '', seenRelays?.size]
   );
 
+  const timestamp = useMemo(
+    () => note ? new Date(note.created_at * 1000).toLocaleString() : '',
+    [note]
+  );
+
+  const displayName = useMemo(() => {
+    if (!note) return '';
+    return getDisplayName(profile, note.pubkey.slice(0, 8) + "...");
+  }, [profile, note]);
+
   useEffect(() => {
     if (!note) return;
     console.log("[ProfileLoader] NoteModal - Profile received:", {
@@ -46,23 +56,18 @@ export default function NoteModal({ note, onClose }: NoteModalProps) {
       profileName: profile?.name || null,
       profileDisplayName: profile?.display_name || null,
     });
-  }, [profile, note?.pubkey]);
+  }, [profile, note]);
 
-  const timestamp = useMemo(
-    () => note ? new Date(note.created_at * 1000).toLocaleString() : '',
-    [note]
-  );
-
-  if (!note) return null;
-
-  const displayName = getDisplayName(profile, note.pubkey.slice(0, 8) + "...");
   useEffect(() => {
+    if (!note) return;
     console.log("[ProfileLoader] NoteModal - Display name calculated:", {
       pubkey: note.pubkey.slice(0, 8) + "...",
       displayName,
       hasProfile: !!profile,
     });
-  }, [displayName, profile, note.pubkey]);
+  }, [displayName, profile, note]);
+
+  if (!note) return null;
 
   const avatarUrl = getProfilePicture(
     profile,

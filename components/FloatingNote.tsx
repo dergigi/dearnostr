@@ -41,7 +41,7 @@ export default function FloatingNote({ note, topPosition, duration, delay, onCli
       // Use shareReplay to log emissions without creating multiple subscriptions
       // This will log the first emission which is important for debugging
       return profileObservable.pipe(
-        tap((value) => {
+        tap((value: { name?: string; display_name?: string } | undefined) => {
           console.log("[ProfileLoader] FloatingNote - Observable emitted:", {
             pubkey: note.pubkey.slice(0, 8) + "...",
             value: value ? { name: value.name, display_name: value.display_name, hasData: true } : null,
