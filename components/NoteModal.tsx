@@ -1,6 +1,6 @@
 "use client";
 
-import { getDisplayName, getProfilePicture } from "applesauce-core/helpers";
+import { getDisplayName, getProfilePicture, getSeenRelays } from "applesauce-core/helpers";
 import { eventStore } from "@/lib/nostr";
 import { NostrEvent } from "nostr-tools";
 import { useObservableMemo } from "applesauce-react/hooks";
@@ -13,9 +13,10 @@ interface NoteModalProps {
 }
 
 export default function NoteModal({ note, onClose }: NoteModalProps) {
+  const seenRelays = useMemo(() => note ? getSeenRelays(note) : undefined, [note]);
   const profile = useObservableMemo(
-    () => note ? eventStore.profile({ pubkey: note.pubkey }) : undefined,
-    [note?.pubkey || '']
+    () => note ? eventStore.profile({ pubkey: note.pubkey, relays: seenRelays && Array.from(seenRelays) }) : undefined,
+    [note?.pubkey || '', seenRelays?.size]
   );
 
   const timestamp = useMemo(

@@ -1,6 +1,6 @@
 "use client";
 
-import { getDisplayName, getProfilePicture } from "applesauce-core/helpers";
+import { getDisplayName, getProfilePicture, getSeenRelays } from "applesauce-core/helpers";
 import { eventStore } from "@/lib/nostr";
 import { NostrEvent } from "nostr-tools";
 import { useObservableMemo } from "applesauce-react/hooks";
@@ -16,9 +16,10 @@ interface FloatingNoteProps {
 }
 
 export default function FloatingNote({ note, topPosition, duration, delay, onClick }: FloatingNoteProps) {
+  const seenRelays = useMemo(() => getSeenRelays(note), [note]);
   const profile = useObservableMemo(
-    () => eventStore.profile({ pubkey: note.pubkey }),
-    [note.pubkey]
+    () => eventStore.profile({ pubkey: note.pubkey, relays: seenRelays && Array.from(seenRelays) }),
+    [note.pubkey, seenRelays?.size]
   );
 
   const displayName = getDisplayName(profile, note.pubkey.slice(0, 6));

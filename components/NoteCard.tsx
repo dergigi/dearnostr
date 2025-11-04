@@ -1,6 +1,6 @@
 "use client";
 
-import { getDisplayName, getProfilePicture } from "applesauce-core/helpers";
+import { getDisplayName, getProfilePicture, getSeenRelays } from "applesauce-core/helpers";
 import { eventStore } from "@/lib/nostr";
 import { NostrEvent } from "nostr-tools";
 import { useObservableMemo } from "applesauce-react/hooks";
@@ -8,9 +8,10 @@ import { useMemo } from "react";
 import Image from "next/image";
 
 export default function NoteCard({ note }: { note: NostrEvent }) {
+  const seenRelays = useMemo(() => getSeenRelays(note), [note]);
   const profile = useObservableMemo(
-    () => eventStore.profile({ pubkey: note.pubkey }),
-    [note.pubkey]
+    () => eventStore.profile({ pubkey: note.pubkey, relays: seenRelays && Array.from(seenRelays) }),
+    [note.pubkey, seenRelays?.size]
   );
 
   const displayName = getDisplayName(profile, note.pubkey.slice(0, 8) + "...");
