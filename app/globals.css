@@ -10,6 +10,6 @@
     transform: translateX(-50vw) translateY(var(--drift-y, 0px)) rotate(calc(var(--rotation, 0deg) + var(--drift-rotate, 0deg)));
   }
   100% {
-    transform: translateX(-100vw) translateY(calc(var(--drift-y, 0px) * 2)) rotate(calc(var(--rotation, 0deg) + var(--drift-rotate, 0deg) * 2));
+    transform: translateX(calc(-100vw - 256px)) translateY(calc(var(--drift-y, 0px) * 2)) rotate(calc(var(--rotation, 0deg) + var(--drift-rotate, 0deg) * 2));
   }
 }
