@@ -3,7 +3,7 @@ import { EventFactory } from "applesauce-factory";
 import { createAddressLoader } from "applesauce-loaders/loaders";
 import { RelayPool } from "applesauce-relay";
 import { ExtensionSigner, ISigner } from "applesauce-signers";
-import { tap } from "rxjs";
+import { tap, finalize, defer } from "rxjs";
 import { DEFAULT_RELAYS } from "./constants";
 
 // Create singleton instances
@@ -19,9 +19,10 @@ const addressLoader = createAddressLoader(pool, {
 // Wrap the loader to add debug logging
 const originalLoader = addressLoader;
 const debugLoader = (pointer: any) => {
+  const pubkeyStr = pointer.pubkey?.slice(0, 8) + "..." || "unknown";
   console.log("[ProfileLoader] Loader called:", {
     kind: pointer.kind,
-    pubkey: pointer.pubkey?.slice(0, 8) + "..." || "unknown",
+    pubkey: pubkeyStr,
     relays: pointer.relays || [],
     identifier: pointer.identifier,
     timestamp: new Date().toISOString(),
@@ -29,33 +30,53 @@ const debugLoader = (pointer: any) => {
   
   const result = originalLoader(pointer);
   
-  // Use tap operator to log without interfering with the stream
-  return result.pipe(
-    tap({
-      next: (event) => {
-        if (event) {
-          console.log("[ProfileLoader] Loader returned event:", {
-            kind: event.kind,
-            pubkey: event.pubkey?.slice(0, 8) + "...",
-            contentLength: event.content?.length || 0,
-            contentPreview: event.content?.substring(0, 100) || "empty",
-            created_at: event.created_at,
+  // Wrap in defer to track when subscription happens
+  return defer(() => {
+    console.log("[ProfileLoader] Loader observable being subscribed to:", {
+      pubkey: pubkeyStr,
+      timestamp: new Date().toISOString(),
+    });
+    return result.pipe(
+      tap({
+        next: (event) => {
+          if (event) {
+            console.log("[ProfileLoader] Loader returned event:", {
+              kind: event.kind,
+              pubkey: event.pubkey?.slice(0, 8) + "...",
+              contentLength: event.content?.length || 0,
+              contentPreview: event.content?.substring(0, 100) || "empty",
+              created_at: event.created_at,
+              timestamp: new Date().toISOString(),
+            });
+          } else {
+            console.log("[ProfileLoader] Loader returned null/undefined", {
+              pubkey: pubkeyStr,
+              timestamp: new Date().toISOString(),
+            });
+          }
+        },
+        error: (err) => {
+          console.error("[ProfileLoader] Loader error:", {
+            pubkey: pubkeyStr,
+            error: err,
             timestamp: new Date().toISOString(),
           });
-        } else {
-          console.log("[ProfileLoader] Loader returned null/undefined", {
+        },
+        complete: () => {
+          console.log("[ProfileLoader] Loader observable completed:", {
+            pubkey: pubkeyStr,
             timestamp: new Date().toISOString(),
           });
-        }
-      },
-      error: (err) => {
-        console.error("[ProfileLoader] Loader error:", {
-          error: err,
+        },
+      }),
+      finalize(() => {
+        console.log("[ProfileLoader] Loader observable finalized:", {
+          pubkey: pubkeyStr,
           timestamp: new Date().toISOString(),
         });
-      },
-    })
-  );
+      })
+    );
+  });
 };
 
 // Assign loaders to event store so profiles are automatically fetched when requested
