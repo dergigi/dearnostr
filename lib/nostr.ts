@@ -4,13 +4,6 @@ import { RelayPool } from "applesauce-relay";
 import { ExtensionSigner, ISigner } from "applesauce-signers";
 import { DEFAULT_RELAYS } from "./constants";
 
-// Extend Window interface to include nostr property
-declare global {
-  interface Window {
-    nostr?: ISigner;
-  }
-}
-
 // Create singleton instances
 export const pool = new RelayPool();
 export const eventStore = new EventStore();
