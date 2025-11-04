@@ -59,7 +59,7 @@ export default function NoteModal({ note, onClose }: NoteModalProps) {
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className="text-xs text-amber-700 hover:text-amber-900 hover:underline cursor-pointer transition-colors"
+            className="text-base text-amber-700 hover:text-amber-900 hover:underline cursor-pointer transition-colors"
           >
             {day}
           </a>
