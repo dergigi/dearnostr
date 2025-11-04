@@ -59,6 +59,7 @@ export default function Home() {
             
             <div className={`bg-amber-50 border rounded-lg shadow-sm p-6 transition-colors duration-300 ${getBorderClass()}`}>
               <PostForm 
+                pubkey={pubkey}
                 onPostSuccess={handlePostSuccess} 
                 onThresholdChange={handleThresholdChange}
               />

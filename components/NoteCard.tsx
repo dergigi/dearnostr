@@ -1,23 +1,27 @@
 "use client";
 
-import { getDisplayName, getProfilePicture } from "applesauce-core/helpers";
+import { getDisplayName, getSeenRelays } from "applesauce-core/helpers";
 import { eventStore } from "@/lib/nostr";
+import { stripEmojis } from "@/lib/utils";
 import { NostrEvent } from "nostr-tools";
 import { useObservableMemo } from "applesauce-react/hooks";
 import { useMemo } from "react";
-import Image from "next/image";
 
 export default function NoteCard({ note }: { note: NostrEvent }) {
+  const seenRelays = useMemo(() => {
+    return getSeenRelays(note);
+  }, [note]);
+
   const profile = useObservableMemo(
-    () => eventStore.profile({ pubkey: note.pubkey }),
-    [note.pubkey]
+    () => {
+      const relays = seenRelays && Array.from(seenRelays);
+      return eventStore.profile({ pubkey: note.pubkey, relays });
+    },
+    [note.pubkey, seenRelays?.size]
   );
 
-  const displayName = getDisplayName(profile, note.pubkey.slice(0, 8) + "...");
-  const avatarUrl = getProfilePicture(
-    profile,
-    `https://robohash.org/${note.pubkey}.png`
-  );
+  const displayNameRaw = getDisplayName(profile, note.pubkey.slice(0, 8) + "...");
+  const displayName = useMemo(() => stripEmojis(displayNameRaw), [displayNameRaw]);
 
   const timestamp = useMemo(
     () => new Date(note.created_at * 1000).toLocaleString(),
@@ -27,24 +31,15 @@ export default function NoteCard({ note }: { note: NostrEvent }) {
   return (
     <div className="border-b border-gray-100 py-5 px-6 hover:bg-gray-50 transition-colors">
       <div className="flex items-start gap-4">
-        <div className="flex-shrink-0">
-          <Image
-            src={avatarUrl}
-            alt={displayName}
-            width={48}
-            height={48}
-            className="w-12 h-12 rounded-full ring-2 ring-gray-100"
-          />
-        </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="font-semibold text-sm text-gray-900">{displayName}</span>
+          <p className="text-sm text-gray-800 leading-relaxed break-words whitespace-pre-wrap mb-2">
+            {note.content}
+          </p>
+          <div className="flex items-center gap-2">
+            <span className="signature text-sm text-gray-900">{displayName}</span>
             <span className="text-xs text-gray-400">·</span>
             <span className="text-xs text-gray-400">{timestamp}</span>
           </div>
-          <p className="text-sm text-gray-800 leading-relaxed break-words whitespace-pre-wrap">
-            {note.content}
-          </p>
         </div>
       </div>
     </div>

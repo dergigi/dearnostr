@@ -1,10 +1,10 @@
 "use client";
 
-import { getDisplayName, getProfilePicture } from "applesauce-core/helpers";
+import { getDisplayName, getSeenRelays } from "applesauce-core/helpers";
 import { eventStore } from "@/lib/nostr";
+import { stripEmojis } from "@/lib/utils";
 import { NostrEvent } from "nostr-tools";
 import { useObservableMemo } from "applesauce-react/hooks";
-import Image from "next/image";
 import { useMemo } from "react";
 
 interface FloatingNoteProps {
@@ -16,16 +16,20 @@ interface FloatingNoteProps {
 }
 
 export default function FloatingNote({ note, topPosition, duration, delay, onClick }: FloatingNoteProps) {
+  const seenRelays = useMemo(() => {
+    return getSeenRelays(note);
+  }, [note]);
+
   const profile = useObservableMemo(
-    () => eventStore.profile({ pubkey: note.pubkey }),
-    [note.pubkey]
+    () => {
+      const relays = seenRelays && Array.from(seenRelays);
+      return eventStore.profile({ pubkey: note.pubkey, relays });
+    },
+    [note.pubkey, seenRelays?.size]
   );
 
-  const displayName = getDisplayName(profile, note.pubkey.slice(0, 6));
-  const avatarUrl = getProfilePicture(
-    profile,
-    `https://robohash.org/${note.pubkey}.png`
-  );
+  const displayNameRaw = getDisplayName(profile, note.pubkey.slice(0, 6));
+  const displayName = useMemo(() => stripEmojis(displayNameRaw), [displayNameRaw]);
 
   // Generate consistent random values based on note ID for stability
   const { rotation, driftY, driftRotate, opacity } = useMemo(() => {
@@ -56,21 +60,12 @@ export default function FloatingNote({ note, topPosition, duration, delay, onCli
         className="bg-amber-50/95 backdrop-blur-sm rounded-lg shadow-md p-4 max-w-xs w-64 border border-amber-200/60 cursor-pointer hover:bg-amber-50 transition-all hover:shadow-lg"
         onClick={onClick}
       >
-        <div className="flex items-start gap-3 mb-2">
-          <Image
-            src={avatarUrl}
-            alt={displayName}
-            width={32}
-            height={32}
-            className="w-8 h-8 rounded-full flex-shrink-0 ring-2 ring-amber-200"
-          />
-          <div className="flex-1 min-w-0">
-            <div className="text-xs font-semibold text-amber-900 truncate">{displayName}</div>
-          </div>
-        </div>
-        <p className="text-sm text-amber-900 leading-relaxed whitespace-pre-wrap break-words line-clamp-6">
+        <p className="text-sm text-amber-900 leading-relaxed whitespace-pre-wrap break-words line-clamp-6 mb-2">
           {note.content}
         </p>
+        <div className="text-xs text-amber-900 truncate">
+          <span className="signature">{displayName}</span>
+        </div>
       </div>
     </div>
   );

@@ -7,6 +7,14 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'robohash.org',
       },
+      {
+        protocol: 'https',
+        hostname: 'creatr.nostr.wine',
+      },
+      {
+        protocol: 'https',
+        hostname: 'coinos.io',
+      },
     ],
   },
   webpack: (config) => {

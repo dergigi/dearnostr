@@ -1,14 +1,19 @@
 "use client";
 
 import { NoteBlueprint } from "applesauce-factory/blueprints";
-import { getFactory, publishEvent } from "@/lib/nostr";
+import { getFactory, publishEvent, eventStore } from "@/lib/nostr";
+import { getDisplayName } from "applesauce-core/helpers";
+import { useObservableMemo } from "applesauce-react/hooks";
+import { stripEmojis } from "@/lib/utils";
 import { DEAR_NOSTR_PREFIX, DEAR_NOSTR_HASHTAG } from "@/lib/constants";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 
 export default function PostForm({
+  pubkey,
   onPostSuccess,
   onThresholdChange,
 }: {
+  pubkey: string;
   onPostSuccess: () => void;
   onThresholdChange?: (isAbove210: boolean, isAbove420: boolean) => void;
 }) {
@@ -16,6 +21,18 @@ export default function PostForm({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Fetch profile for logged-in user
+  const profile = useObservableMemo(
+    () => pubkey ? eventStore.profile({ pubkey }) : undefined,
+    [pubkey]
+  );
+
+  const displayName = useMemo(() => {
+    if (!pubkey) return '';
+    const rawName = getDisplayName(profile, pubkey.slice(0, 8) + "...");
+    return stripEmojis(rawName);
+  }, [profile, pubkey]);
 
   useEffect(() => {
     textareaRef.current?.focus();
@@ -115,6 +132,16 @@ export default function PostForm({
       {error && (
         <div className="mb-4 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-2">
           {error}
+        </div>
+      )}
+      
+      {displayName && (
+        <div className="mb-3 text-left pl-4">
+          <span 
+            className={`signature text-amber-900 text-xl ${loading ? 'signature-writing' : 'opacity-20'}`}
+          >
+            {displayName}
+          </span>
         </div>
       )}
       

@@ -1,11 +1,11 @@
 "use client";
 
-import { getDisplayName, getProfilePicture } from "applesauce-core/helpers";
+import { getDisplayName, getSeenRelays } from "applesauce-core/helpers";
 import { eventStore } from "@/lib/nostr";
+import { stripEmojis } from "@/lib/utils";
 import { NostrEvent } from "nostr-tools";
 import { useObservableMemo } from "applesauce-react/hooks";
 import { useMemo } from "react";
-import Image from "next/image";
 
 interface NoteModalProps {
   note: NostrEvent | null;
@@ -13,23 +13,32 @@ interface NoteModalProps {
 }
 
 export default function NoteModal({ note, onClose }: NoteModalProps) {
+  const seenRelays = useMemo(() => {
+    if (!note) return undefined;
+    return getSeenRelays(note);
+  }, [note]);
+
   const profile = useObservableMemo(
-    () => note ? eventStore.profile({ pubkey: note.pubkey }) : undefined,
-    [note?.pubkey || '']
+    () => {
+      if (!note) return undefined;
+      const relays = seenRelays && Array.from(seenRelays);
+      return eventStore.profile({ pubkey: note.pubkey, relays });
+    },
+    [note?.pubkey || '', seenRelays?.size]
   );
 
-  const timestamp = useMemo(
-    () => note ? new Date(note.created_at * 1000).toLocaleString() : '',
+  const day = useMemo(
+    () => note ? new Date(note.created_at * 1000).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }) : '',
     [note]
   );
 
-  if (!note) return null;
+  const displayName = useMemo(() => {
+    if (!note) return '';
+    const rawName = getDisplayName(profile, note.pubkey.slice(0, 8) + "...");
+    return stripEmojis(rawName);
+  }, [profile, note]);
 
-  const displayName = getDisplayName(profile, note.pubkey.slice(0, 8) + "...");
-  const avatarUrl = getProfilePicture(
-    profile,
-    `https://robohash.org/${note.pubkey}.png`
-  );
+  if (!note) return null;
 
   return (
     <div
@@ -44,31 +53,19 @@ export default function NoteModal({ note, onClose }: NoteModalProps) {
         className="relative bg-amber-50 rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto z-10 border border-amber-200"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="sticky top-0 bg-amber-50 border-b border-amber-200 px-6 py-4 flex items-center justify-between rounded-t-lg">
-          <div className="flex items-center gap-3">
-            <a
-              href={`https://nostr.eu/e/${note.id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cursor-pointer hover:opacity-80 transition-opacity"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Image
-                src={avatarUrl}
-                alt={displayName}
-                width={40}
-                height={40}
-                className="w-10 h-10 rounded-full ring-2 ring-amber-200"
-              />
-            </a>
-            <div>
-              <div className="font-semibold text-amber-900">{displayName}</div>
-              <div className="text-xs text-amber-700">{timestamp}</div>
-            </div>
-          </div>
+        <div className="sticky top-0 bg-amber-50 border-b border-amber-200 px-6 py-4 flex items-center justify-between gap-4 rounded-t-lg">
+          <a
+            href={`https://nostr.eu/e/${note.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="text-base text-amber-700 hover:text-amber-900 hover:underline cursor-pointer transition-colors"
+          >
+            {day}
+          </a>
           <button
             onClick={onClose}
-            className="text-amber-600 hover:text-amber-800 transition-colors p-2 hover:bg-amber-100 rounded-full"
+            className="text-amber-700 hover:text-amber-900 transition-colors p-2 hover:bg-amber-100 rounded-full"
             aria-label="Close"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,9 +75,12 @@ export default function NoteModal({ note, onClose }: NoteModalProps) {
         </div>
         
         <div className="p-6">
-          <p className="text-amber-900 leading-relaxed whitespace-pre-wrap break-words">
+          <p className="text-amber-900 leading-relaxed whitespace-pre-wrap break-words mb-4">
             {note.content}
           </p>
+          <div className="flex items-center gap-2">
+            <span className="signature text-amber-900">{displayName}</span>
+          </div>
         </div>
       </div>
     </div>
