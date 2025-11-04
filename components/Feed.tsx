@@ -4,7 +4,7 @@ import { mapEventsToStore, mapEventsToTimeline } from "applesauce-core";
 import { onlyEvents } from "applesauce-relay";
 import { useObservableMemo } from "applesauce-react/hooks";
 import { pool, eventStore } from "@/lib/nostr";
-import { DEFAULT_RELAYS, DEAR_NOSTR_PREFIX, DEAR_NOSTR_HASHTAG } from "@/lib/constants";
+import { DEFAULT_RELAYS, DEAR_NOSTR_HASHTAG } from "@/lib/constants";
 import { merge, map, startWith, tap } from "rxjs";
 import { useEffect } from "react";
 import { NostrEvent } from "nostr-tools";
@@ -62,14 +62,6 @@ export default function Feed() {
       mapEventsToTimeline(),
       tap((timeline) => {
         console.log(`${DEBUG_PREFIX} Timeline updated, total events:`, timeline.length);
-      }),
-      map((timeline) => {
-        // Filter to only show notes that start with "Dear Nostr" (case-insensitive)
-        const filtered = timeline.filter((event) =>
-          event.content.trim().toLowerCase().startsWith(DEAR_NOSTR_PREFIX.toLowerCase())
-        );
-        console.log(`${DEBUG_PREFIX} Filtered timeline: ${filtered.length}/${timeline.length} events match "Dear Nostr" prefix`);
-        return filtered;
       }),
       map((timeline) => {
         const newArray = [...timeline];
