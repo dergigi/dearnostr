@@ -1,11 +1,10 @@
 "use client";
 
-import { getDisplayName, getProfilePicture, getSeenRelays } from "applesauce-core/helpers";
+import { getDisplayName, getSeenRelays } from "applesauce-core/helpers";
 import { eventStore } from "@/lib/nostr";
 import { NostrEvent } from "nostr-tools";
 import { useObservableMemo } from "applesauce-react/hooks";
 import { useEffect, useMemo } from "react";
-import Image from "next/image";
 
 interface NoteModalProps {
   note: NostrEvent | null;
@@ -69,11 +68,6 @@ export default function NoteModal({ note, onClose }: NoteModalProps) {
 
   if (!note) return null;
 
-  const avatarUrl = getProfilePicture(
-    profile,
-    `https://robohash.org/${note.pubkey}.png`
-  );
-
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -89,21 +83,6 @@ export default function NoteModal({ note, onClose }: NoteModalProps) {
       >
         <div className="sticky top-0 bg-amber-50 border-b border-amber-200 px-6 py-4 flex items-center justify-between rounded-t-lg">
           <div className="flex items-center gap-3">
-            <a
-              href={`https://nostr.eu/e/${note.id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cursor-pointer hover:opacity-80 transition-opacity"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Image
-                src={avatarUrl}
-                alt={displayName}
-                width={40}
-                height={40}
-                className="w-10 h-10 rounded-full ring-2 ring-amber-200"
-              />
-            </a>
             <div>
               <div className="font-semibold text-amber-900">{displayName}</div>
               <div className="text-xs text-amber-700">{timestamp}</div>

@@ -1,11 +1,10 @@
 "use client";
 
-import { getDisplayName, getProfilePicture, getSeenRelays } from "applesauce-core/helpers";
+import { getDisplayName, getSeenRelays } from "applesauce-core/helpers";
 import { eventStore } from "@/lib/nostr";
 import { NostrEvent } from "nostr-tools";
 import { useObservableMemo } from "applesauce-react/hooks";
 import { tap } from "rxjs";
-import Image from "next/image";
 import { useEffect, useMemo } from "react";
 
 interface FloatingNoteProps {
@@ -73,10 +72,6 @@ export default function FloatingNote({ note, topPosition, duration, delay, onCli
       hasProfile: !!profile,
     });
   }, [displayName, profile, note.pubkey]);
-  const avatarUrl = getProfilePicture(
-    profile,
-    `https://robohash.org/${note.pubkey}.png`
-  );
 
   // Generate consistent random values based on note ID for stability
   const { rotation, driftY, driftRotate, opacity } = useMemo(() => {
@@ -108,13 +103,6 @@ export default function FloatingNote({ note, topPosition, duration, delay, onCli
         onClick={onClick}
       >
         <div className="flex items-start gap-3 mb-2">
-          <Image
-            src={avatarUrl}
-            alt={displayName}
-            width={32}
-            height={32}
-            className="w-8 h-8 rounded-full flex-shrink-0 ring-2 ring-amber-200"
-          />
           <div className="flex-1 min-w-0">
             <div className="text-xs font-semibold text-amber-900 truncate">{displayName}</div>
           </div>
