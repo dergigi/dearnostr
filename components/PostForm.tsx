@@ -120,7 +120,7 @@ export default function PostForm({
       
       <button
         type="submit"
-        disabled={loading || !content.trim()}
+        disabled={loading || !content.trim() || isAbove420}
         className="flex items-center justify-center gap-2 px-6 py-3 bg-transparent hover:bg-amber-100/50 disabled:opacity-40 disabled:cursor-not-allowed text-amber-800 disabled:text-amber-400 font-semibold transition-all duration-200 border-t border-amber-200/50 pt-4 mt-2"
       >
         {loading ? (
@@ -147,13 +147,19 @@ export default function PostForm({
       >
         {isAbove420 ? (
           // Full circle: filled red circle with white X
-          <svg className="w-8 h-8" viewBox="0 0 32 32">
+          <svg 
+            className="w-8 h-8 circle-transform" 
+            viewBox="0 0 32 32"
+          >
             <circle
               cx="16"
               cy="16"
               r="14"
               fill="rgb(220 38 38)"
-              className="transition-all duration-300"
+              style={{
+                transformOrigin: '16px 16px',
+              }}
+              className="circle-fill"
             />
             <path
               d="M10 10 L22 22 M22 10 L10 22"
@@ -161,11 +167,15 @@ export default function PostForm({
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
+              className="circle-x"
+              style={{
+                strokeDasharray: '20',
+              }}
             />
           </svg>
         ) : (
           // Progress circle
-          <svg className="w-8 h-8 transform -rotate-90" viewBox="0 0 32 32">
+          <svg className="w-8 h-8 transform -rotate-90 transition-all duration-300" viewBox="0 0 32 32">
             {/* Background circle */}
             <circle
               cx="16"

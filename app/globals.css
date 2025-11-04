@@ -107,3 +107,48 @@
 .fade-in {
   animation: fade-in 0.5s ease-out forwards;
 }
+
+@keyframes circleTransform {
+  from {
+    transform: scale(0.9) rotate(-90deg);
+    opacity: 0.8;
+  }
+  to {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes fillCircle {
+  from {
+    transform: scale(0.93);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes drawX {
+  from {
+    stroke-dashoffset: 20;
+    opacity: 0;
+  }
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+.circle-transform {
+  animation: circleTransform 0.4s ease-out forwards;
+}
+
+.circle-fill {
+  animation: fillCircle 0.3s ease-out forwards;
+}
+
+.circle-x {
+  animation: drawX 0.3s ease-out 0.2s both;
+}
