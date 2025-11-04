@@ -9,6 +9,7 @@ import { merge, map, startWith, tap } from "rxjs";
 import { useEffect, useMemo, useState } from "react";
 import { NostrEvent } from "nostr-tools";
 import FloatingNote from "./FloatingNote";
+import NoteModal from "./NoteModal";
 
 const DEBUG_PREFIX = "[Feed:Debug]";
 
@@ -21,6 +22,7 @@ const MIN_VERTICAL_SPACING = 250; // pixels
 
 export default function Feed() {
   const [viewportHeight, setViewportHeight] = useState(800);
+  const [selectedNote, setSelectedNote] = useState<NostrEvent | null>(null);
 
   useEffect(() => {
     console.log(`${DEBUG_PREFIX} Component mounted, default relays:`, DEFAULT_RELAYS);
@@ -131,16 +133,23 @@ export default function Feed() {
   }
 
   return (
-    <div className="fixed inset-0 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      {loopingEvents.map((noteData, index) => (
-        <FloatingNote
-          key={`${noteData.event.id}-${index}`}
-          note={noteData.event}
-          topPosition={noteData.topPosition}
-          duration={noteData.duration}
-          delay={noteData.delay}
-        />
-      ))}
-    </div>
+    <>
+      <div className="fixed inset-0 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+        {loopingEvents.map((noteData, index) => (
+          <FloatingNote
+            key={`${noteData.event.id}-${index}`}
+            note={noteData.event}
+            topPosition={noteData.topPosition}
+            duration={noteData.duration}
+            delay={noteData.delay}
+            onClick={() => setSelectedNote(noteData.event)}
+          />
+        ))}
+      </div>
+      <NoteModal
+        note={selectedNote}
+        onClose={() => setSelectedNote(null)}
+      />
+    </>
   );
 }

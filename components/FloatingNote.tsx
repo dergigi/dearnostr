@@ -12,9 +12,10 @@ interface FloatingNoteProps {
   topPosition: number;
   duration: number;
   delay: number;
+  onClick: () => void;
 }
 
-export default function FloatingNote({ note, topPosition, duration, delay }: FloatingNoteProps) {
+export default function FloatingNote({ note, topPosition, duration, delay, onClick }: FloatingNoteProps) {
   const profile = useObservableMemo(
     () => eventStore.profile({ pubkey: note.pubkey }),
     [note.pubkey]
@@ -39,7 +40,7 @@ export default function FloatingNote({ note, topPosition, duration, delay }: Flo
 
   return (
     <div
-      className="absolute pointer-events-none"
+      className="absolute"
       style={{
         top: `${topPosition}%`,
         left: '100%',
@@ -51,7 +52,10 @@ export default function FloatingNote({ note, topPosition, duration, delay }: Flo
         '--rotation': `${rotation}deg`,
       } as React.CSSProperties & { '--drift-y': string; '--drift-rotate': string; '--rotation': string }}
     >
-      <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4 max-w-xs w-64 border border-white/50">
+      <div
+        className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4 max-w-xs w-64 border border-white/50 cursor-pointer hover:bg-white/95 transition-all hover:shadow-xl"
+        onClick={onClick}
+      >
         <div className="flex items-start gap-3 mb-2">
           <Image
             src={avatarUrl}
@@ -64,7 +68,7 @@ export default function FloatingNote({ note, topPosition, duration, delay }: Flo
             <div className="text-xs font-medium text-gray-700 truncate">{displayName}</div>
           </div>
         </div>
-        <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap break-words">
+        <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap break-words line-clamp-6">
           {note.content}
         </p>
       </div>
