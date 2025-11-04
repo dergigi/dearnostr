@@ -72,7 +72,7 @@ export default function Feed() {
   }, []);
 
   const loading = events === undefined;
-  const eventsArray = Array.isArray(events) ? events : [];
+  const eventsArray = useMemo(() => Array.isArray(events) ? events : [], [events]);
 
   // Create a looping array of events with calculated positions to prevent overlap
   const loopingEvents = useMemo(() => {

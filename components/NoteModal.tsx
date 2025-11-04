@@ -14,13 +14,13 @@ interface NoteModalProps {
 
 export default function NoteModal({ note, onClose }: NoteModalProps) {
   const profile = useObservableMemo(
-    () => note ? eventStore.profile({ pubkey: note.pubkey }) : null,
+    () => note ? eventStore.profile({ pubkey: note.pubkey }) : undefined,
     [note?.pubkey || '']
   );
 
   const timestamp = useMemo(
     () => note ? new Date(note.created_at * 1000).toLocaleString() : '',
-    [note?.created_at]
+    [note]
   );
 
   if (!note) return null;
