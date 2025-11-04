@@ -73,10 +73,18 @@ export default function PostForm({
           value={content}
           onChange={(e) => setContent(e.target.value)}
           disabled={loading}
-          className="w-full px-4 py-3 border border-amber-300 bg-amber-50/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 resize-none disabled:bg-amber-100/50 disabled:cursor-not-allowed text-amber-900 placeholder-amber-600"
-          rows={4}
+          className="w-full px-4 py-3 bg-transparent focus:outline-none resize-none disabled:cursor-not-allowed text-amber-900 placeholder-amber-600/70 leading-relaxed"
+          rows={8}
+          style={{
+            backgroundImage: `repeating-linear-gradient(
+              transparent,
+              transparent 31px,
+              rgba(139, 120, 93, 0.08) 31px,
+              rgba(139, 120, 93, 0.08) 32px
+            )`,
+          }}
         />
-        <div className="mt-2 text-xs text-amber-700">
+        <div className="mt-2 text-xs text-amber-700/70">
           {totalLength} characters
         </div>
       </div>
@@ -90,9 +98,23 @@ export default function PostForm({
       <button
         type="submit"
         disabled={loading || !content.trim()}
-        className="w-full px-6 py-3 bg-amber-700 hover:bg-amber-800 disabled:bg-amber-300 disabled:cursor-not-allowed text-amber-50 rounded-lg font-semibold shadow-sm hover:shadow transition-all duration-200"
+        className="flex items-center justify-center gap-2 px-6 py-3 bg-transparent hover:bg-amber-100/50 disabled:opacity-40 disabled:cursor-not-allowed text-amber-800 disabled:text-amber-400 font-semibold transition-all duration-200 border-t border-amber-200/50 pt-4 mt-2"
       >
-        {loading ? "Posting..." : "Post"}
+        {loading ? (
+          <>
+            <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span>Signing...</span>
+          </>
+        ) : (
+          <>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+            </svg>
+            <span>Sign</span>
+          </>
+        )}
       </button>
     </form>
   );
