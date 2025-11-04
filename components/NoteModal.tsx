@@ -39,7 +39,7 @@ export default function NoteModal({ note, onClose }: NoteModalProps) {
   );
 
   const day = useMemo(
-    () => note ? new Date(note.created_at * 1000).toLocaleDateString('en-US', { month: 'long', day: 'numeric' }) : '',
+    () => note ? new Date(note.created_at * 1000).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }) : '',
     [note]
   );
 
