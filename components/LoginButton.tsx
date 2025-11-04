@@ -2,7 +2,7 @@
 
 import { ExtensionSigner, ExtensionMissingError } from "applesauce-signers";
 import { getSigner, updateFactorySigner } from "@/lib/nostr";
-import { ALBY_EXTENSION_URL, NOS2X_EXTENSION_URL } from "@/lib/constants";
+import { ALBY_EXTENSION_URL, NOS2X_EXTENSION_URL, EXTENSION_INSTALL_MESSAGE } from "@/lib/constants";
 import { useEffect, useState, ReactNode } from "react";
 
 export default function LoginButton({
@@ -80,9 +80,7 @@ export default function LoginButton({
 
   const handleLogin = async () => {
     if (!window.nostr) {
-      setError(
-        <ExtensionInstallMessage message="No signer found. Install a nostr extension like Alby or nos2x to unlock the diary." />
-      );
+      setError(<ExtensionInstallMessage message={EXTENSION_INSTALL_MESSAGE} />);
       return;
     }
 
@@ -213,7 +211,7 @@ export default function LoginButton({
       
       {!extensionAvailable && !unlocking && !unlocked && (
         <p className="text-sm text-amber-700 text-center max-w-md px-4">
-          <ExtensionInstallMessage message="No signer found. Install a nostr extension like Alby or nos2x to unlock the diary." />
+          <ExtensionInstallMessage message={EXTENSION_INSTALL_MESSAGE} />
         </p>
       )}
       {error && (
