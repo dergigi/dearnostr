@@ -46,13 +46,21 @@ export default function NoteModal({ note, onClose }: NoteModalProps) {
       >
         <div className="sticky top-0 bg-amber-50 border-b border-amber-200 px-6 py-4 flex items-center justify-between rounded-t-lg">
           <div className="flex items-center gap-3">
-            <Image
-              src={avatarUrl}
-              alt={displayName}
-              width={40}
-              height={40}
-              className="w-10 h-10 rounded-full ring-2 ring-amber-200"
-            />
+            <a
+              href={`https://nostr.eu/e/${note.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Image
+                src={avatarUrl}
+                alt={displayName}
+                width={40}
+                height={40}
+                className="w-10 h-10 rounded-full ring-2 ring-amber-200"
+              />
+            </a>
             <div>
               <div className="font-semibold text-amber-900">{displayName}</div>
               <div className="text-xs text-amber-700">{timestamp}</div>
