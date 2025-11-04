@@ -5,13 +5,11 @@ import { onlyEvents } from "applesauce-relay";
 import { useObservableMemo } from "applesauce-react/hooks";
 import { pool, eventStore } from "@/lib/nostr";
 import { DEFAULT_RELAYS, DEAR_NOSTR_HASHTAG } from "@/lib/constants";
-import { merge, map, startWith, tap } from "rxjs";
+import { merge, map, startWith } from "rxjs";
 import { useEffect, useMemo, useState } from "react";
 import { NostrEvent } from "nostr-tools";
 import FloatingNote from "./FloatingNote";
 import NoteModal from "./NoteModal";
-
-const DEBUG_PREFIX = "[Feed:Debug]";
 
 // Animation duration range: 20-50 seconds for calm but varied movement
 const MIN_DURATION = 20000;
@@ -25,10 +23,6 @@ export default function Feed() {
   const [selectedNote, setSelectedNote] = useState<NostrEvent | null>(null);
 
   useEffect(() => {
-    console.log(`${DEBUG_PREFIX} Component mounted, default relays:`, DEFAULT_RELAYS);
-    console.log(`${DEBUG_PREFIX} Relay pool:`, pool);
-    console.log(`${DEBUG_PREFIX} Event store:`, eventStore);
-    
     // Set initial viewport height
     setViewportHeight(window.innerHeight);
     
@@ -39,8 +33,6 @@ export default function Feed() {
   }, []);
 
   const events = useObservableMemo(() => {
-    console.log(`${DEBUG_PREFIX} Creating subscriptions for ${DEFAULT_RELAYS.length} relays`);
-    
     const filter = {
       kinds: [1],
       "#t": [DEAR_NOSTR_HASHTAG.toLowerCase()],
@@ -53,20 +45,10 @@ export default function Feed() {
     });
 
     return merge(...subscriptions).pipe(
-      tap((response) => {
-        if (typeof response === "object" && response !== null && "id" in response) {
-          const event = response as NostrEvent;
-          console.log(`${DEBUG_PREFIX} Received event from relay:`, event.id, event.kind, event.content?.substring(0, 50));
-        }
-      }),
       onlyEvents(),
       mapEventsToStore(eventStore),
       mapEventsToTimeline(),
-      map((timeline) => {
-        const newArray = [...timeline];
-        console.log(`${DEBUG_PREFIX} Created new array reference, length:`, newArray.length);
-        return newArray;
-      }),
+      map((timeline) => [...timeline]),
       startWith([])
     );
   }, []);

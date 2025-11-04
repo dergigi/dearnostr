@@ -5,50 +5,23 @@ import { eventStore } from "@/lib/nostr";
 import { stripEmojis } from "@/lib/utils";
 import { NostrEvent } from "nostr-tools";
 import { useObservableMemo } from "applesauce-react/hooks";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 
 export default function NoteCard({ note }: { note: NostrEvent }) {
   const seenRelays = useMemo(() => {
-    const relays = getSeenRelays(note);
-    console.log("[ProfileLoader] NoteCard - Extracted seen relays:", {
-      pubkey: note.pubkey.slice(0, 8) + "...",
-      seenRelays: relays ? Array.from(relays) : null,
-      noteId: note.id.slice(0, 8) + "...",
-    });
-    return relays;
+    return getSeenRelays(note);
   }, [note]);
 
   const profile = useObservableMemo(
     () => {
       const relays = seenRelays && Array.from(seenRelays);
-      console.log("[ProfileLoader] NoteCard - Requesting profile:", {
-        pubkey: note.pubkey.slice(0, 8) + "...",
-        relays: relays || [],
-        hasRelays: !!relays && relays.length > 0,
-      });
       return eventStore.profile({ pubkey: note.pubkey, relays });
     },
     [note.pubkey, seenRelays?.size]
   );
 
-  useEffect(() => {
-    console.log("[ProfileLoader] NoteCard - Profile received:", {
-      pubkey: note.pubkey.slice(0, 8) + "...",
-      hasProfile: !!profile,
-      profileName: profile?.name || null,
-      profileDisplayName: profile?.display_name || null,
-    });
-  }, [profile, note.pubkey]);
-
   const displayNameRaw = getDisplayName(profile, note.pubkey.slice(0, 8) + "...");
   const displayName = useMemo(() => stripEmojis(displayNameRaw), [displayNameRaw]);
-  useEffect(() => {
-    console.log("[ProfileLoader] NoteCard - Display name calculated:", {
-      pubkey: note.pubkey.slice(0, 8) + "...",
-      displayName,
-      hasProfile: !!profile,
-    });
-  }, [displayName, profile, note.pubkey]);
 
   const timestamp = useMemo(
     () => new Date(note.created_at * 1000).toLocaleString(),

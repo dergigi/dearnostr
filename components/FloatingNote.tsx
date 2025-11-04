@@ -5,8 +5,7 @@ import { eventStore } from "@/lib/nostr";
 import { stripEmojis } from "@/lib/utils";
 import { NostrEvent } from "nostr-tools";
 import { useObservableMemo } from "applesauce-react/hooks";
-import { tap } from "rxjs";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 
 interface FloatingNoteProps {
   note: NostrEvent;
@@ -18,62 +17,19 @@ interface FloatingNoteProps {
 
 export default function FloatingNote({ note, topPosition, duration, delay, onClick }: FloatingNoteProps) {
   const seenRelays = useMemo(() => {
-    const relays = getSeenRelays(note);
-    console.log("[ProfileLoader] FloatingNote - Extracted seen relays:", {
-      pubkey: note.pubkey.slice(0, 8) + "...",
-      seenRelays: relays ? Array.from(relays) : null,
-      noteId: note.id.slice(0, 8) + "...",
-    });
-    return relays;
+    return getSeenRelays(note);
   }, [note]);
 
   const profile = useObservableMemo(
     () => {
       const relays = seenRelays && Array.from(seenRelays);
-      console.log("[ProfileLoader] FloatingNote - Requesting profile:", {
-        pubkey: note.pubkey.slice(0, 8) + "...",
-        relays: relays || [],
-        hasRelays: !!relays && relays.length > 0,
-      });
-      
-      const profileObservable = eventStore.profile({ pubkey: note.pubkey, relays });
-      
-      // Use shareReplay to log emissions without creating multiple subscriptions
-      // This will log the first emission which is important for debugging
-      return profileObservable.pipe(
-        tap((value: { name?: string; display_name?: string } | undefined) => {
-          console.log("[ProfileLoader] FloatingNote - Observable emitted:", {
-            pubkey: note.pubkey.slice(0, 8) + "...",
-            value: value ? { name: value.name, display_name: value.display_name, hasData: true } : null,
-            type: typeof value,
-            isUndefined: value === undefined,
-            isNull: value === null,
-            timestamp: new Date().toISOString(),
-          });
-        })
-      );
+      return eventStore.profile({ pubkey: note.pubkey, relays });
     },
     [note.pubkey, seenRelays?.size]
   );
 
-  useEffect(() => {
-    console.log("[ProfileLoader] FloatingNote - Profile received:", {
-      pubkey: note.pubkey.slice(0, 8) + "...",
-      hasProfile: !!profile,
-      profileName: profile?.name || null,
-      profileDisplayName: profile?.display_name || null,
-    });
-  }, [profile, note.pubkey]);
-
   const displayNameRaw = getDisplayName(profile, note.pubkey.slice(0, 6));
   const displayName = useMemo(() => stripEmojis(displayNameRaw), [displayNameRaw]);
-  useEffect(() => {
-    console.log("[ProfileLoader] FloatingNote - Display name calculated:", {
-      pubkey: note.pubkey.slice(0, 8) + "...",
-      displayName,
-      hasProfile: !!profile,
-    });
-  }, [displayName, profile, note.pubkey]);
 
   // Generate consistent random values based on note ID for stability
   const { rotation, driftY, driftRotate, opacity } = useMemo(() => {
