@@ -61,7 +61,7 @@ export default function NoteCard({ note }: { note: NostrEvent }) {
             {note.content}
           </p>
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-sm text-gray-900">{displayName}</span>
+            <span className="signature text-sm text-gray-900">{displayName}</span>
             <span className="text-xs text-gray-400">·</span>
             <span className="text-xs text-gray-400">{timestamp}</span>
           </div>

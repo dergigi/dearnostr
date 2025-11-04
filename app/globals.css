@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+@import url('https://fonts.bunny.net/css?family=ms-madi:400&family=crimson-text:400,600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -8,6 +8,17 @@
   body {
     font-family: 'Crimson Text', serif;
   }
+}
+
+/* Signature style for usernames */
+.signature {
+  font-family: 'Ms Madi', cursive;
+  font-size: 1.25em;
+  font-weight: 400;
+  color: inherit;
+  transform: rotate(-1deg);
+  display: inline-block;
+  letter-spacing: 0.05em;
 }
 
 /* Lined paper background pattern */

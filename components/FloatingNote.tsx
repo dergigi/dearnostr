@@ -105,8 +105,8 @@ export default function FloatingNote({ note, topPosition, duration, delay, onCli
         <p className="text-sm text-amber-900 leading-relaxed whitespace-pre-wrap break-words line-clamp-6 mb-2">
           {note.content}
         </p>
-        <div className="text-xs font-semibold text-amber-900 truncate">
-          {displayName}
+        <div className="text-xs text-amber-900 truncate">
+          <span className="signature">{displayName}</span>
         </div>
       </div>
     </div>

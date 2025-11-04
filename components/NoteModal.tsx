@@ -98,7 +98,7 @@ export default function NoteModal({ note, onClose }: NoteModalProps) {
             {note.content}
           </p>
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-amber-900">{displayName}</span>
+            <span className="signature text-amber-900">{displayName}</span>
             <span className="text-xs text-amber-700">·</span>
             <span className="text-xs text-amber-700">{timestamp}</span>
           </div>
