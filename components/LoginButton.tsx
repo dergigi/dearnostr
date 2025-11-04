@@ -81,7 +81,7 @@ export default function LoginButton({
   const handleLogin = async () => {
     if (!window.nostr) {
       setError(
-        <ExtensionInstallMessage message="Install a nostr extension like Alby or nos2x to unlock the diary." />
+        <ExtensionInstallMessage message="No signer found. Install a nostr extension like Alby or nos2x to unlock the diary." />
       );
       return;
     }
