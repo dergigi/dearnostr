@@ -20,7 +20,6 @@ export default function LoginButton({
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // Check immediately
     const checkExtension = () => {
       const available = !!window.nostr;
       setExtensionAvailable(available);
@@ -28,27 +27,16 @@ export default function LoginButton({
     };
     
     checkExtension();
-
-    // Check again after a short delay (extensions may load asynchronously)
-    let intervalId: NodeJS.Timeout | null = null;
-    const timeoutId = setTimeout(() => {
-      if (checkExtension()) return; // Stop if found
-      
-      // Also check periodically in case extension loads very late
-      // Stop after 10 seconds or once extension is found
-      let attempts = 0;
-      const maxAttempts = 10;
-      intervalId = setInterval(() => {
-        attempts++;
-        if (checkExtension() || attempts >= maxAttempts) {
-          if (intervalId) clearInterval(intervalId);
-        }
-      }, 1000);
-    }, 100);
+    
+    // Check periodically until extension is found or 10 seconds pass
+    const intervalId = setInterval(() => {
+      if (checkExtension()) clearInterval(intervalId);
+    }, 500);
+    const timeoutId = setTimeout(() => clearInterval(intervalId), 10000);
 
     return () => {
+      clearInterval(intervalId);
       clearTimeout(timeoutId);
-      if (intervalId) clearInterval(intervalId);
     };
   }, []);
 
