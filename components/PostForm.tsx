@@ -83,10 +83,10 @@ export default function PostForm({
   const strokeDashoffset = circumference - (progressPercentage / 100) * circumference;
 
   // Calculate opacity: 20% at 60 chars or below, increases to 100% as chars increase
-  // Maps from 60 chars (0.2) to 420 chars (1.0)
+  // Maps from 60 chars (0.2) to 210 chars (1.0)
   const circleOpacity = totalLength <= 60 
     ? 0.2 
-    : Math.min(1.0, 0.2 + ((totalLength - 60) / 360) * 0.8);
+    : Math.min(1.0, 0.2 + ((totalLength - 60) / 150) * 0.8);
 
   return (
     <form onSubmit={handleSubmit} className="w-full relative">
