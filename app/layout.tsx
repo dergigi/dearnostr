@@ -3,7 +3,7 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Dear Nostr',
-  description: 'A clean, minimal Nostr client for #DearNostr posts',
+  description: 'A public diary for yourself and others.',
   icons: {
     icon: [
       { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   manifest: '/site.webmanifest',
   openGraph: {
     title: 'Dear Nostr',
-    description: 'A clean, minimal Nostr client for #DearNostr posts',
+    description: 'A public diary for yourself and others.',
     type: 'website',
     images: [
       {
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Dear Nostr',
-    description: 'A clean, minimal Nostr client for #DearNostr posts',
+    description: 'A public diary for yourself and others.',
     images: ['/og-image.png'],
   },
 }
