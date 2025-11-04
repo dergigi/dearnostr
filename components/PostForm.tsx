@@ -7,8 +7,10 @@ import { useState, useRef, useEffect } from "react";
 
 export default function PostForm({
   onPostSuccess,
+  onThresholdChange,
 }: {
   onPostSuccess: () => void;
+  onThresholdChange?: (isAbove210: boolean, isAbove420: boolean) => void;
 }) {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,6 +20,14 @@ export default function PostForm({
   useEffect(() => {
     textareaRef.current?.focus();
   }, []);
+
+  const totalLength = DEAR_NOSTR_PREFIX.length + content.length;
+  const isAbove210 = totalLength > 210;
+  const isAbove420 = totalLength > 420;
+
+  useEffect(() => {
+    onThresholdChange?.(isAbove210, isAbove420);
+  }, [isAbove210, isAbove420, onThresholdChange]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,10 +70,20 @@ export default function PostForm({
     }
   };
 
-  const totalLength = DEAR_NOSTR_PREFIX.length + content.length;
+  const progressPercentage = Math.min(100, (totalLength / 420) * 100);
+  const circleColor = isAbove420 
+    ? "rgb(220 38 38)" // red-600
+    : isAbove210 
+    ? "rgb(234 88 12)" // orange-600
+    : "rgb(180 83 9)"; // amber-700
+
+  // Calculate circle circumference and stroke-dashoffset for progress
+  const circleRadius = 13; // 30px diameter / 2 - 2px stroke = 13px radius
+  const circumference = 2 * Math.PI * circleRadius;
+  const strokeDashoffset = circumference - (progressPercentage / 100) * circumference;
 
   return (
-    <form onSubmit={handleSubmit} className="w-full">
+    <form onSubmit={handleSubmit} className="w-full relative">
       <div className="mb-4">
         <div className="mb-2 text-amber-900 font-semibold">
           {DEAR_NOSTR_PREFIX}
@@ -84,9 +104,6 @@ export default function PostForm({
             )`,
           }}
         />
-        <div className="mt-2 text-xs text-amber-700/70">
-          {totalLength} characters
-        </div>
       </div>
       
       {error && (
@@ -116,6 +133,34 @@ export default function PostForm({
           </>
         )}
       </button>
+
+      {/* Circular progress indicator */}
+      <div className="absolute bottom-0 right-0 w-8 h-8">
+        <svg className="w-8 h-8 transform -rotate-90" viewBox="0 0 32 32">
+          {/* Background circle */}
+          <circle
+            cx="16"
+            cy="16"
+            r={circleRadius}
+            fill="none"
+            stroke="rgba(139, 120, 93, 0.2)"
+            strokeWidth="2"
+          />
+          {/* Progress circle */}
+          <circle
+            cx="16"
+            cy="16"
+            r={circleRadius}
+            fill="none"
+            stroke={circleColor}
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            strokeDashoffset={strokeDashoffset}
+            className="transition-all duration-300"
+          />
+        </svg>
+      </div>
     </form>
   );
 }

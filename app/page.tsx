@@ -9,6 +9,8 @@ export default function Home() {
   const [pubkey, setPubkey] = useState<string>("");
   const [showSuccess, setShowSuccess] = useState(false);
   const [showFeed, setShowFeed] = useState(false);
+  const [isAbove210, setIsAbove210] = useState(false);
+  const [isAbove420, setIsAbove420] = useState(false);
 
   const handleLogin = (userPubkey: string) => {
     setPubkey(userPubkey);
@@ -20,6 +22,17 @@ export default function Home() {
     setTimeout(() => {
       setShowSuccess(false);
     }, 3000);
+  };
+
+  const handleThresholdChange = (above210: boolean, above420: boolean) => {
+    setIsAbove210(above210);
+    setIsAbove420(above420);
+  };
+
+  const getBorderClass = () => {
+    if (isAbove420) return "border-red-600";
+    if (isAbove210) return "border-orange-600";
+    return "border-amber-200";
   };
 
   return (
@@ -44,8 +57,11 @@ export default function Home() {
               </div>
             )}
             
-            <div className="bg-amber-50 border border-amber-200 rounded-lg shadow-sm p-6">
-              <PostForm onPostSuccess={handlePostSuccess} />
+            <div className={`bg-amber-50 border rounded-lg shadow-sm p-6 transition-colors duration-300 ${getBorderClass()}`}>
+              <PostForm 
+                onPostSuccess={handlePostSuccess} 
+                onThresholdChange={handleThresholdChange}
+              />
             </div>
 
             {showFeed && <Feed />}
