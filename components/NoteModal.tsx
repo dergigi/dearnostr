@@ -84,9 +84,15 @@ export default function NoteModal({ note, onClose }: NoteModalProps) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="sticky top-0 bg-amber-50 border-b border-amber-200 px-6 py-4 flex items-center justify-between rounded-t-lg">
-          <div className="text-xs text-amber-700">
+          <a
+            href={`https://nostr.eu/e/${note.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="text-xs text-amber-700 hover:text-amber-900 hover:underline cursor-pointer transition-colors"
+          >
             {day}
-          </div>
+          </a>
           <button
             onClick={onClose}
             className="text-amber-600 hover:text-amber-800 transition-colors p-2 hover:bg-amber-100 rounded-full"
