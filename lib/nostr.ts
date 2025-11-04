@@ -52,5 +52,5 @@ export function updateFactorySigner() {
 
 // Helper to publish events
 export async function publishEvent(event: any) {
-  await pool.publish(event, DEFAULT_RELAYS);
+  await pool.publish(DEFAULT_RELAYS, event);
 }
