@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@keyframes drift {
+  0% {
+    transform: translateX(0) translateY(0) rotate(var(--rotation, 0deg));
+  }
+  50% {
+    transform: translateX(-50vw) translateY(var(--drift-y, 0px)) rotate(calc(var(--rotation, 0deg) + var(--drift-rotate, 0deg)));
+  }
+  100% {
+    transform: translateX(-100vw) translateY(calc(var(--drift-y, 0px) * 2)) rotate(calc(var(--rotation, 0deg) + var(--drift-rotate, 0deg) * 2));
+  }
+}

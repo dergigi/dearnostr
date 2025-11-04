@@ -6,11 +6,15 @@ import { useObservableMemo } from "applesauce-react/hooks";
 import { pool, eventStore } from "@/lib/nostr";
 import { DEFAULT_RELAYS, DEAR_NOSTR_HASHTAG } from "@/lib/constants";
 import { merge, map, startWith, tap } from "rxjs";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { NostrEvent } from "nostr-tools";
-import NoteCard from "./NoteCard";
+import FloatingNote from "./FloatingNote";
 
 const DEBUG_PREFIX = "[Feed:Debug]";
+
+// Animation duration range: 60-120 seconds for very slow, calm movement
+const MIN_DURATION = 60000;
+const MAX_DURATION = 120000;
 
 export default function Feed() {
   useEffect(() => {
@@ -22,103 +26,88 @@ export default function Feed() {
   const events = useObservableMemo(() => {
     console.log(`${DEBUG_PREFIX} Creating subscriptions for ${DEFAULT_RELAYS.length} relays`);
     
-    // Create subscriptions for each relay
     const filter = {
       kinds: [1],
-      "#t": [DEAR_NOSTR_HASHTAG.toLowerCase()], // Lowercase to match how posts are tagged (NIP-24)
+      "#t": [DEAR_NOSTR_HASHTAG.toLowerCase()],
       limit: 100,
     };
-    console.log(`${DEBUG_PREFIX} Using filter:`, JSON.stringify(filter, null, 2));
     
     const subscriptions = DEFAULT_RELAYS.map((relayUrl) => {
-      console.log(`${DEBUG_PREFIX} Creating subscription for relay:`, relayUrl);
       const relay = pool.relay(relayUrl);
-      console.log(`${DEBUG_PREFIX} Relay instance for ${relayUrl}:`, relay);
-      const sub = relay.subscription(filter);
-      console.log(`${DEBUG_PREFIX} Subscription created for ${relayUrl}:`, sub);
-      return sub;
+      return relay.subscription(filter);
     });
 
-    console.log(`${DEBUG_PREFIX} Total subscriptions created:`, subscriptions.length);
-
-    // Merge all relay subscriptions
     return merge(...subscriptions).pipe(
       tap((response) => {
         if (typeof response === "object" && response !== null && "id" in response) {
           const event = response as NostrEvent;
           console.log(`${DEBUG_PREFIX} Received event from relay:`, event.id, event.kind, event.content?.substring(0, 50));
-        } else {
-          console.log(`${DEBUG_PREFIX} Received non-event response from relay:`, response);
         }
       }),
       onlyEvents(),
-      tap((event) => {
-        console.log(`${DEBUG_PREFIX} Event passed onlyEvents filter:`, event?.id);
-      }),
       mapEventsToStore(eventStore),
-      tap(() => {
-        console.log(`${DEBUG_PREFIX} Event added to store`);
-      }),
       mapEventsToTimeline(),
-      tap((timeline) => {
-        console.log(`${DEBUG_PREFIX} Timeline updated, total events:`, timeline.length);
-      }),
       map((timeline) => {
         const newArray = [...timeline];
         console.log(`${DEBUG_PREFIX} Created new array reference, length:`, newArray.length);
         return newArray;
       }),
-      startWith([]) // Emit empty array initially so loading state resolves
+      startWith([])
     );
   }, []);
 
-  useEffect(() => {
-    console.log(`${DEBUG_PREFIX} Events state changed:`, {
-      events: events,
-      eventsLength: Array.isArray(events) ? events.length : undefined,
-      isUndefined: events === undefined,
-      isArray: Array.isArray(events),
-    });
-  }, [events]);
-
   const loading = events === undefined;
-  
-  const eventsLength = Array.isArray(events) ? events.length : 0;
-  console.log(`${DEBUG_PREFIX} Render - loading:`, loading, "events:", eventsLength);
+  const eventsArray = Array.isArray(events) ? events : [];
+
+  // Create a looping array of events for continuous display
+  const loopingEvents = useMemo(() => {
+    if (eventsArray.length === 0) return [];
+    // Duplicate events multiple times to ensure continuous flow
+    return [...eventsArray, ...eventsArray, ...eventsArray];
+  }, [eventsArray]);
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-16">
+      <div className="fixed inset-0 flex justify-center items-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-          <div className="text-sm text-gray-500">Loading feed...</div>
+          <div className="text-sm text-gray-500">Loading notes...</div>
         </div>
       </div>
     );
   }
 
-  if (!events || !Array.isArray(events) || events.length === 0) {
+  if (eventsArray.length === 0) {
     return (
-      <div className="flex justify-center items-center py-16">
+      <div className="fixed inset-0 flex justify-center items-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
         <div className="text-center">
-          <div className="text-gray-400 text-lg mb-2">No Dear Nostr posts yet.</div>
-          <div className="text-sm text-gray-500">Be the first to post!</div>
+          <div className="text-gray-400 text-lg mb-2">No notes yet.</div>
+          <div className="text-sm text-gray-500">The wind is still...</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-200">
-        <h2 className="text-xl font-semibold text-gray-900">Dear Nostr Feed</h2>
-        <p className="text-sm text-gray-600 mt-1">{events.length} {events.length === 1 ? 'post' : 'posts'}</p>
-      </div>
-      <div>
-        {events.map((event) => (
-          <NoteCard key={event.id} note={event} />
-        ))}
-      </div>
+    <div className="fixed inset-0 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      {loopingEvents.map((event, index) => {
+        // Random vertical position between 10% and 90% of viewport
+        const topPosition = 10 + (index % 8) * 10 + Math.random() * 5;
+        // Random duration between MIN and MAX
+        const duration = MIN_DURATION + (index % 10) * (MAX_DURATION - MIN_DURATION) / 10;
+        // Random delay to stagger the notes
+        const delay = (index * 2000) % 10000;
+        
+        return (
+          <FloatingNote
+            key={`${event.id}-${index}`}
+            note={event}
+            topPosition={topPosition}
+            duration={duration}
+            delay={delay}
+          />
+        );
+      })}
     </div>
   );
 }
