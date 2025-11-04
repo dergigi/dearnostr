@@ -13,6 +13,9 @@ export default function LoginButton({
   const [pubkey, setPubkey] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [unlocking, setUnlocking] = useState(false);
+  const [unlocked, setUnlocked] = useState(false);
+  const [showConnectionStatus, setShowConnectionStatus] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -26,8 +29,13 @@ export default function LoginButton({
       return;
     }
 
-    setLoading(true);
+    setUnlocking(true);
     setError(null);
+
+    // Wait for unlock animation to complete
+    await new Promise(resolve => setTimeout(resolve, 600));
+
+    setLoading(true);
 
     try {
       const signer = getSigner();
@@ -36,10 +44,18 @@ export default function LoginButton({
       }
 
       const userPubkey = await signer.getPublicKey();
+      
+      // Show unlock animation
+      setUnlocked(true);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       setPubkey(userPubkey);
       updateFactorySigner();
+      setShowConnectionStatus(true);
       onLogin(userPubkey);
     } catch (err) {
+      setUnlocking(false);
+      setUnlocked(false);
       if (err instanceof ExtensionMissingError) {
         setError("Extension not available. Please install a Nostr extension.");
       } else {
@@ -53,12 +69,15 @@ export default function LoginButton({
 
   const handleLogout = () => {
     setPubkey(null);
+    setUnlocking(false);
+    setUnlocked(false);
+    setShowConnectionStatus(false);
     onLogin("");
   };
 
-  if (pubkey) {
+  if (pubkey && showConnectionStatus) {
     return (
-      <div className="flex flex-col items-center gap-3">
+      <div className="flex flex-col items-center gap-3 fade-in">
         <div className="flex items-center gap-2 px-4 py-2 bg-amber-100 border border-amber-300 rounded-lg">
           <div className="w-2 h-2 bg-amber-600 rounded-full"></div>
           <span className="text-sm font-semibold text-amber-900">
@@ -79,12 +98,61 @@ export default function LoginButton({
     <div className="flex flex-col items-center gap-4">
       <button
         onClick={handleLogin}
-        disabled={!extensionAvailable || loading}
-        className="px-8 py-3 bg-amber-700 hover:bg-amber-800 disabled:bg-amber-300 disabled:cursor-not-allowed text-amber-50 rounded-lg font-semibold shadow-sm hover:shadow transition-all duration-200"
+        disabled={!extensionAvailable || loading || unlocking}
+        className="relative group"
+        aria-label="Unlock diary"
       >
-        {loading ? "Connecting..." : "Login with Extension"}
+        {unlocked ? (
+          <div className="padlock-unlocked">
+            <svg
+              width="64"
+              height="64"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-amber-700"
+            >
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+          </div>
+        ) : (
+          <div className={`relative ${unlocking ? 'padlock-unlocking' : ''}`}>
+            <svg
+              width="64"
+              height="64"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className={`text-amber-700 transition-all duration-200 ${!extensionAvailable || loading ? 'opacity-50' : 'group-hover:scale-110 cursor-pointer'}`}
+            >
+              {/* Body - rendered first so shackle appears on top */}
+              <rect
+                className="padlock-body"
+                x="3"
+                y="11"
+                width="18"
+                height="11"
+                rx="2"
+                ry="2"
+              />
+              {/* Shackle - rendered on top */}
+              <path
+                className="padlock-shackle"
+                d="M6 11V7a6 6 0 0 1 12 0v4"
+              />
+            </svg>
+          </div>
+        )}
       </button>
-      {!extensionAvailable && (
+      
+      {!extensionAvailable && !unlocking && !unlocked && (
         <p className="text-sm text-amber-700 text-center max-w-md px-4">
           Nostr extension not detected. Please install a Nostr extension like Alby or nos2x to continue.
         </p>
