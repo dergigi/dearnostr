@@ -6,21 +6,34 @@ import { useObservableMemo } from "applesauce-react/hooks";
 import { pool, eventStore } from "@/lib/nostr";
 import { DEFAULT_RELAYS, DEAR_NOSTR_HASHTAG } from "@/lib/constants";
 import { merge, map, startWith, tap } from "rxjs";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { NostrEvent } from "nostr-tools";
 import FloatingNote from "./FloatingNote";
 
 const DEBUG_PREFIX = "[Feed:Debug]";
 
-// Animation duration range: 60-120 seconds for very slow, calm movement
-const MIN_DURATION = 60000;
-const MAX_DURATION = 120000;
+// Animation duration range: 20-50 seconds for calm but varied movement
+const MIN_DURATION = 20000;
+const MAX_DURATION = 50000;
+
+// Minimum vertical spacing between notes to prevent overlap
+const MIN_VERTICAL_SPACING = 250; // pixels
 
 export default function Feed() {
+  const [viewportHeight, setViewportHeight] = useState(800);
+
   useEffect(() => {
     console.log(`${DEBUG_PREFIX} Component mounted, default relays:`, DEFAULT_RELAYS);
     console.log(`${DEBUG_PREFIX} Relay pool:`, pool);
     console.log(`${DEBUG_PREFIX} Event store:`, eventStore);
+    
+    // Set initial viewport height
+    setViewportHeight(window.innerHeight);
+    
+    // Update on resize
+    const handleResize = () => setViewportHeight(window.innerHeight);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const events = useObservableMemo(() => {
@@ -59,12 +72,41 @@ export default function Feed() {
   const loading = events === undefined;
   const eventsArray = Array.isArray(events) ? events : [];
 
-  // Create a looping array of events for continuous display
+  // Create a looping array of events with calculated positions to prevent overlap
   const loopingEvents = useMemo(() => {
     if (eventsArray.length === 0) return [];
     // Duplicate events multiple times to ensure continuous flow
-    return [...eventsArray, ...eventsArray, ...eventsArray];
-  }, [eventsArray]);
+    const events = [...eventsArray, ...eventsArray, ...eventsArray];
+    
+    // Calculate viewport height in pixels
+    const usableHeight = viewportHeight * 0.8; // Use 80% of viewport (10% top, 10% bottom)
+    const maxLanes = Math.max(2, Math.floor(usableHeight / MIN_VERTICAL_SPACING));
+    
+    // Assign each note to a lane and calculate positions
+    return events.map((event, index) => {
+      // Assign to lane with some variation
+      const lane = index % maxLanes;
+      const laneVariation = (event.id.charCodeAt(0) % 30) - 15; // -15 to +15px variation
+      const topPosition = 10 + (lane * (usableHeight / maxLanes)) / viewportHeight * 100 + laneVariation / viewportHeight * 100;
+      
+      // More varied speed distribution using multiple factors
+      const speedSeed = event.id.charCodeAt(0) + event.id.charCodeAt(1) + index;
+      const speedVariation = (speedSeed % 100) / 100; // 0 to 1
+      // Use exponential distribution for more variation (some very fast, some slower)
+      const speedFactor = Math.pow(speedVariation, 0.7); // Skewed toward faster speeds
+      const duration = MIN_DURATION + (1 - speedFactor) * (MAX_DURATION - MIN_DURATION);
+      
+      // Stagger delays more to prevent clustering
+      const delay = (index * (duration / 10)) % (duration * 2);
+      
+      return {
+        event,
+        topPosition: Math.max(5, Math.min(95, topPosition)), // Clamp between 5% and 95%
+        duration,
+        delay,
+      };
+    });
+  }, [eventsArray, viewportHeight]);
 
   if (loading) {
     return (
@@ -90,24 +132,15 @@ export default function Feed() {
 
   return (
     <div className="fixed inset-0 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      {loopingEvents.map((event, index) => {
-        // Random vertical position between 10% and 90% of viewport
-        const topPosition = 10 + (index % 8) * 10 + Math.random() * 5;
-        // Random duration between MIN and MAX
-        const duration = MIN_DURATION + (index % 10) * (MAX_DURATION - MIN_DURATION) / 10;
-        // Random delay to stagger the notes
-        const delay = (index * 2000) % 10000;
-        
-        return (
-          <FloatingNote
-            key={`${event.id}-${index}`}
-            note={event}
-            topPosition={topPosition}
-            duration={duration}
-            delay={delay}
-          />
-        );
-      })}
+      {loopingEvents.map((noteData, index) => (
+        <FloatingNote
+          key={`${noteData.event.id}-${index}`}
+          note={noteData.event}
+          topPosition={noteData.topPosition}
+          duration={noteData.duration}
+          delay={noteData.delay}
+        />
+      ))}
     </div>
   );
 }
