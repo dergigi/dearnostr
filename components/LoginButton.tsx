@@ -35,7 +35,9 @@ export default function LoginButton({
     return (
       <>
         {parts.map((part, index) => {
-          const url = linkMap[part];
+          // Normalize case for lookup: capitalize first letter
+          const normalizedKey = part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+          const url = linkMap[normalizedKey] || linkMap[part];
           if (url) {
             return (
               <a
