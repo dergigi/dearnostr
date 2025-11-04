@@ -18,9 +18,38 @@ export default function LoginButton({
   const [showConnectionStatus, setShowConnectionStatus] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setExtensionAvailable(!!window.nostr);
-    }
+    if (typeof window === "undefined") return;
+
+    // Check immediately
+    const checkExtension = () => {
+      const available = !!window.nostr;
+      setExtensionAvailable(available);
+      return available;
+    };
+    
+    checkExtension();
+
+    // Check again after a short delay (extensions may load asynchronously)
+    let intervalId: NodeJS.Timeout | null = null;
+    const timeoutId = setTimeout(() => {
+      if (checkExtension()) return; // Stop if found
+      
+      // Also check periodically in case extension loads very late
+      // Stop after 10 seconds or once extension is found
+      let attempts = 0;
+      const maxAttempts = 10;
+      intervalId = setInterval(() => {
+        attempts++;
+        if (checkExtension() || attempts >= maxAttempts) {
+          if (intervalId) clearInterval(intervalId);
+        }
+      }, 1000);
+    }, 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+      if (intervalId) clearInterval(intervalId);
+    };
   }, []);
 
   const handleLogin = async () => {
