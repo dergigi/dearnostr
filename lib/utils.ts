@@ -24,3 +24,12 @@ export function stripEmojis(text: string): string {
   return text.replace(emojiRegex, '').trim();
 }
 
+/**
+ * Detects if the current device is running Android
+ * @returns true if Android, false otherwise (or if SSR)
+ */
+export function isAndroid(): boolean {
+  if (typeof window === "undefined") return false;
+  return /android/i.test(window.navigator.userAgent);
+}
+

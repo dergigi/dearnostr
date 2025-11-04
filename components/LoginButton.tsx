@@ -2,8 +2,9 @@
 
 import { ExtensionSigner, ExtensionMissingError } from "applesauce-signers";
 import { getSigner, updateFactorySigner } from "@/lib/nostr";
-import { ALBY_EXTENSION_URL, NOS2X_EXTENSION_URL, EXTENSION_INSTALL_MESSAGE } from "@/lib/constants";
-import { useEffect, useState, ReactNode } from "react";
+import { ALBY_EXTENSION_URL, NOS2X_EXTENSION_URL, KEYCHAT_URL, AMBER_URL, EXTENSION_INSTALL_MESSAGE, EXTENSION_INSTALL_MESSAGE_ANDROID } from "@/lib/constants";
+import { isAndroid } from "@/lib/utils";
+import { useEffect, useState, ReactNode, useMemo } from "react";
 
 export default function LoginButton({
   onLogin,
@@ -18,34 +19,33 @@ export default function LoginButton({
   const [unlocked, setUnlocked] = useState(false);
   const [showConnectionStatus, setShowConnectionStatus] = useState(false);
 
+  const extensionMessage = useMemo(() => {
+    return isAndroid() ? EXTENSION_INSTALL_MESSAGE_ANDROID : EXTENSION_INSTALL_MESSAGE;
+  }, []);
+
   const ExtensionInstallMessage = ({ message }: { message: string }) => {
-    const parts = message.split(/(Alby|nos2x)/);
+    const linkMap: Record<string, string> = {
+      Alby: ALBY_EXTENSION_URL,
+      nos2x: NOS2X_EXTENSION_URL,
+      Keychat: KEYCHAT_URL,
+      Amber: AMBER_URL,
+    };
+
+    const parts = message.split(/(Alby|nos2x|Keychat|Amber)/i);
     return (
       <>
         {parts.map((part, index) => {
-          if (part === "Alby") {
+          const url = linkMap[part];
+          if (url) {
             return (
               <a
                 key={index}
-                href={ALBY_EXTENSION_URL}
+                href={url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline hover:text-amber-900"
               >
-                Alby
-              </a>
-            );
-          }
-          if (part === "nos2x") {
-            return (
-              <a
-                key={index}
-                href={NOS2X_EXTENSION_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline hover:text-amber-900"
-              >
-                nos2x
+                {part}
               </a>
             );
           }
@@ -80,7 +80,7 @@ export default function LoginButton({
 
   const handleLogin = async () => {
     if (!window.nostr) {
-      setError(<ExtensionInstallMessage message={EXTENSION_INSTALL_MESSAGE} />);
+      setError(<ExtensionInstallMessage message={extensionMessage} />);
       return;
     }
 
@@ -112,7 +112,7 @@ export default function LoginButton({
       setUnlocking(false);
       setUnlocked(false);
       if (err instanceof ExtensionMissingError) {
-        setError(<ExtensionInstallMessage message={EXTENSION_INSTALL_MESSAGE} />);
+        setError(<ExtensionInstallMessage message={extensionMessage} />);
       } else {
         setError("Failed to connect. Please try again.");
       }
@@ -209,7 +209,7 @@ export default function LoginButton({
       
       {!extensionAvailable && !unlocking && !unlocked && (
         <p className="text-sm text-amber-700 text-center max-w-md px-4">
-          <ExtensionInstallMessage message={EXTENSION_INSTALL_MESSAGE} />
+          <ExtensionInstallMessage message={extensionMessage} />
         </p>
       )}
       {error && (
