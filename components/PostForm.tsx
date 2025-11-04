@@ -156,9 +156,6 @@ export default function PostForm({
               cy="16"
               r="14"
               fill="rgb(220 38 38)"
-              style={{
-                transformOrigin: '16px 16px',
-              }}
               className="circle-fill"
             />
             <path
