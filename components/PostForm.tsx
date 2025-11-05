@@ -138,7 +138,7 @@ export default function PostForm({
       {displayName && (
         <div className="mb-3 text-left pl-4">
           <span 
-            className={`signature text-amber-900 text-xl ${loading ? 'signature-writing' : 'opacity-20'}`}
+            className={`signature text-amber-900 text-2xl ${loading ? 'signature-writing' : 'opacity-20'}`}
           >
             {displayName}
           </span>
