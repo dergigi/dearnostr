@@ -10,6 +10,9 @@
     "lint:fix": "next lint --fix"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^7.1.0",
+    "@fortawesome/free-solid-svg-icons": "^7.1.0",
+    "@fortawesome/react-fontawesome": "^3.1.0",
     "applesauce-core": "^3.0.0",
     "applesauce-factory": "^3.0.0",
     "applesauce-loaders": "^3.0.0",
