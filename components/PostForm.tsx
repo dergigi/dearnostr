@@ -123,7 +123,7 @@ export default function PostForm({
           rows={8}
           style={{
             lineHeight: '31px',
-            paddingTop: '0px',
+            paddingTop: '7px',
             paddingBottom: '12px',
             backgroundImage: `repeating-linear-gradient(
               transparent,
