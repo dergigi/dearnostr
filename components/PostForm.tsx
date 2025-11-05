@@ -119,15 +119,19 @@ export default function PostForm({
           value={content}
           onChange={(e) => setContent(e.target.value)}
           disabled={loading}
-          className="w-full px-4 py-3 bg-transparent focus:outline-none resize-none disabled:cursor-not-allowed text-amber-900 placeholder-amber-600/70 leading-relaxed"
+          className="w-full px-4 bg-transparent focus:outline-none resize-none disabled:cursor-not-allowed text-amber-900 placeholder-amber-600/70"
           rows={8}
           style={{
+            lineHeight: '31px',
+            paddingTop: '0px',
+            paddingBottom: '12px',
             backgroundImage: `repeating-linear-gradient(
               transparent,
               transparent 31px,
               rgba(139, 120, 93, 0.08) 31px,
               rgba(139, 120, 93, 0.08) 32px
             )`,
+            backgroundPosition: '0 0',
           }}
         />
       </div>
