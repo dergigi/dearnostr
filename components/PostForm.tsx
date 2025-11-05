@@ -151,7 +151,7 @@ export default function PostForm({
       <button
         type="submit"
         disabled={loading || !content.trim() || isAbove420}
-        className="flex items-center justify-center gap-2 px-6 py-3 bg-transparent hover:bg-amber-100/50 disabled:opacity-40 disabled:cursor-not-allowed text-amber-800 disabled:text-amber-400 font-semibold transition-all duration-200 border-t border-dotted border-amber-800 pt-4 mt-2"
+        className="flex items-center justify-center gap-2 px-6 py-3 bg-transparent hover:bg-amber-100/50 disabled:opacity-40 disabled:cursor-not-allowed text-amber-800 disabled:text-amber-400 font-semibold transition-all duration-200 border-t border-dotted border-amber-700 pt-4 mt-2"
       >
         {loading ? (
           <>
