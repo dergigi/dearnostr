@@ -3,6 +3,7 @@
 import { getDisplayName, getSeenRelays } from "applesauce-core/helpers";
 import { eventStore } from "@/lib/nostr";
 import { stripEmojis } from "@/lib/utils";
+import { NOSTR_GATEWAY } from "@/lib/constants";
 import { NostrEvent } from "nostr-tools";
 import { useObservableMemo } from "applesauce-react/hooks";
 import { useMemo } from "react";
@@ -55,7 +56,7 @@ export default function NoteModal({ note, onClose }: NoteModalProps) {
       >
         <div className="sticky top-0 bg-amber-50 border-b border-amber-200 px-6 py-4 flex items-center justify-between gap-4 rounded-t-lg">
           <a
-            href={`https://nostr.eu/e/${note.id}`}
+            href={`${NOSTR_GATEWAY}/e/${note.id}`}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}

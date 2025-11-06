@@ -7,6 +7,7 @@ export const DEFAULT_RELAYS = [
 export const DEAR_NOSTR_PREFIX = "Dear Nostr,\n\n";
 export const DEAR_NOSTR_HASHTAG = "DearNostr";
 
+export const NOSTR_GATEWAY = "https://njump.to";
 export const ALBY_EXTENSION_URL = "https://getalby.com/alby-extension";
 export const NOS2X_EXTENSION_URL = "https://github.com/fiatjaf/nos2x";
 export const KEYCHAT_URL = "https://zapstore.dev/apps/naddr1qvzqqqr7pvpzpwleyw4fy3sxt7yvgrran0mpenxqlululur94r9jlax0hd3q3rc7qq8xxmmd9e4k27trdpshgtnfduky3mxq";
