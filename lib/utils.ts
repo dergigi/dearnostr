@@ -42,3 +42,29 @@ export function isIOS(): boolean {
   return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
 }
 
+/**
+ * Encodes a Nostr event to a nevent identifier (NIP-19)
+ * @param eventId - The event ID (hex string)
+ * @param relays - Optional array of relay URLs to include as hints
+ * @param author - Optional author pubkey to include
+ * @returns The nevent identifier string
+ */
+export function encodeNevent(
+  eventId: string,
+  relays?: string[],
+  author?: string
+): string {
+  // Import at function level to avoid SSR issues
+  const { nip19 } = require("nostr-tools");
+  
+  const data: { id: string; relays?: string[]; author?: string } = { id: eventId };
+  if (relays && relays.length > 0) {
+    data.relays = relays;
+  }
+  if (author) {
+    data.author = author;
+  }
+  
+  return nip19.neventEncode(data);
+}
+

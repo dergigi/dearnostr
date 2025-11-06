@@ -2,7 +2,7 @@
 
 import { getDisplayName, getSeenRelays } from "applesauce-core/helpers";
 import { eventStore } from "@/lib/nostr";
-import { stripEmojis } from "@/lib/utils";
+import { stripEmojis, encodeNevent } from "@/lib/utils";
 import { NOSTR_GATEWAY } from "@/lib/constants";
 import { NostrEvent } from "nostr-tools";
 import { useObservableMemo } from "applesauce-react/hooks";
@@ -39,6 +39,12 @@ export default function NoteModal({ note, onClose }: NoteModalProps) {
     return stripEmojis(rawName);
   }, [profile, note]);
 
+  const nevent = useMemo(() => {
+    if (!note) return '';
+    const relays = seenRelays ? Array.from(seenRelays) : undefined;
+    return encodeNevent(note.id, relays, note.pubkey);
+  }, [note, seenRelays]);
+
   if (!note) return null;
 
   return (
@@ -56,7 +62,7 @@ export default function NoteModal({ note, onClose }: NoteModalProps) {
       >
         <div className="sticky top-0 bg-amber-50 border-b border-amber-200 px-6 py-4 flex items-center justify-between gap-4 rounded-t-lg">
           <a
-            href={`${NOSTR_GATEWAY}/e/${note.id}`}
+            href={`${NOSTR_GATEWAY}/${nevent}`}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
