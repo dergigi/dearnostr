@@ -70,3 +70,4 @@ dearnostr/
 ├── lib/              # Utilities and Nostr setup
 └── package.json      # Dependencies
 ```
+
