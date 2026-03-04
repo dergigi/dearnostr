@@ -1,7 +1,11 @@
 "use client";
 
-import { useTimelineEvents } from "applesauce-loaders/hooks";
+import { mapEventsToStore, mapEventsToTimeline } from "applesauce-core";
+import { onlyEvents } from "applesauce-relay";
+import { use$ } from "applesauce-react/hooks";
+import { pool, eventStore } from "@/lib/nostr";
 import { DEFAULT_RELAYS, DEAR_NOSTR_HASHTAG } from "@/lib/constants";
+import { merge, map, startWith } from "rxjs";
 import { useEffect, useMemo, useState } from "react";
 import type { NostrEvent } from "applesauce-core/interfaces";
 import FloatingNote from "./FloatingNote";
@@ -28,13 +32,27 @@ export default function Feed() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const events = useTimelineEvents(
-    {
-      kinds: [1],
-      "#t": [DEAR_NOSTR_HASHTAG.toLowerCase()],
-    },
-    DEFAULT_RELAYS,
-    { limit: 100 }
+  const events = use$(
+    useMemo(() => {
+      const filter = {
+        kinds: [1],
+        "#t": [DEAR_NOSTR_HASHTAG.toLowerCase()],
+        limit: 100,
+      };
+      
+      const subscriptions = DEFAULT_RELAYS.map((relayUrl) => {
+        const relay = pool.relay(relayUrl);
+        return relay.subscription(filter);
+      });
+
+      return merge(...subscriptions).pipe(
+        onlyEvents(),
+        mapEventsToStore(eventStore),
+        mapEventsToTimeline(),
+        map((timeline) => [...timeline]),
+        startWith([])
+      );
+    }, [])
   );
 
   const loading = events === undefined;
