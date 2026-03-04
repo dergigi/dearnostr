@@ -5,7 +5,7 @@ import { eventStore } from "@/lib/nostr";
 import { stripEmojis, encodeNevent } from "@/lib/utils";
 import { NOSTR_GATEWAY } from "@/lib/constants";
 import type { NostrEvent } from "applesauce-core/interfaces";
-import { use$ } from "applesauce-react/hooks";
+import { use$ } from "applesauce-react";
 import { useMemo } from "react";
 
 interface NoteModalProps {

@@ -2,7 +2,7 @@
 
 import { mapEventsToStore, mapEventsToTimeline } from "applesauce-core";
 import { onlyEvents } from "applesauce-relay";
-import { use$ } from "applesauce-react/hooks";
+import { use$ } from "applesauce-react";
 import { pool, eventStore } from "@/lib/nostr";
 import { DEFAULT_RELAYS, DEAR_NOSTR_HASHTAG } from "@/lib/constants";
 import { merge, map, startWith } from "rxjs";

@@ -3,7 +3,7 @@
 import { NoteBlueprint } from "applesauce-factory/blueprints";
 import { getFactory, publishEvent, eventStore } from "@/lib/nostr";
 import { getDisplayName } from "applesauce-core/helpers";
-import { use$ } from "applesauce-react/hooks";
+import { use$ } from "applesauce-react";
 import { stripEmojis } from "@/lib/utils";
 import { DEAR_NOSTR_PREFIX, DEAR_NOSTR_HASHTAG } from "@/lib/constants";
 import { useState, useRef, useEffect, useMemo } from "react";
