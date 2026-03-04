@@ -4,8 +4,8 @@ import { getDisplayName, getSeenRelays } from "applesauce-core/helpers";
 import { eventStore } from "@/lib/nostr";
 import { stripEmojis, encodeNevent } from "@/lib/utils";
 import { NOSTR_GATEWAY } from "@/lib/constants";
-import { NostrEvent } from "nostr-tools";
-import { useObservableMemo } from "applesauce-react/hooks";
+import type { NostrEvent } from "applesauce-core/interfaces";
+import { use$ } from "applesauce-react/hooks";
 import { useMemo } from "react";
 
 interface NoteModalProps {
@@ -19,14 +19,8 @@ export default function NoteModal({ note, onClose }: NoteModalProps) {
     return getSeenRelays(note);
   }, [note]);
 
-  const profile = useObservableMemo(
-    () => {
-      if (!note) return undefined;
-      const relays = seenRelays && Array.from(seenRelays);
-      return eventStore.profile({ pubkey: note.pubkey, relays });
-    },
-    [note?.pubkey || '', seenRelays?.size]
-  );
+  const relays = useMemo(() => seenRelays && Array.from(seenRelays), [seenRelays]);
+  const profile = use$(note ? eventStore.profile({ pubkey: note.pubkey, relays }) : undefined);
 
   const day = useMemo(
     () => note ? new Date(note.created_at * 1000).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }) : '',

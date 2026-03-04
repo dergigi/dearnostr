@@ -3,8 +3,8 @@
 import { getDisplayName, getSeenRelays } from "applesauce-core/helpers";
 import { eventStore } from "@/lib/nostr";
 import { stripEmojis } from "@/lib/utils";
-import { NostrEvent } from "nostr-tools";
-import { useObservableMemo } from "applesauce-react/hooks";
+import type { NostrEvent } from "applesauce-core/interfaces";
+import { use$ } from "applesauce-react/hooks";
 import { useMemo } from "react";
 
 interface FloatingNoteProps {
@@ -20,13 +20,8 @@ export default function FloatingNote({ note, topPosition, duration, delay, onCli
     return getSeenRelays(note);
   }, [note]);
 
-  const profile = useObservableMemo(
-    () => {
-      const relays = seenRelays && Array.from(seenRelays);
-      return eventStore.profile({ pubkey: note.pubkey, relays });
-    },
-    [note.pubkey, seenRelays?.size]
-  );
+  const relays = useMemo(() => seenRelays && Array.from(seenRelays), [seenRelays]);
+  const profile = use$(eventStore.profile({ pubkey: note.pubkey, relays }));
 
   const displayNameRaw = getDisplayName(profile, note.pubkey.slice(0, 6));
   const displayName = useMemo(() => stripEmojis(displayNameRaw), [displayNameRaw]);
