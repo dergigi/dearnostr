@@ -1,13 +1,13 @@
 "use client";
 
-import { ApplesauceProvider } from "applesauce-react";
-import { eventStore, pool } from "@/lib/nostr";
+import { EventStoreProvider } from "applesauce-react/providers";
+import { eventStore } from "@/lib/nostr";
 import { ReactNode } from "react";
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
-    <ApplesauceProvider eventStore={eventStore} pool={pool}>
+    <EventStoreProvider eventStore={eventStore}>
       {children}
-    </ApplesauceProvider>
+    </EventStoreProvider>
   );
 }

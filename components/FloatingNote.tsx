@@ -3,8 +3,8 @@
 import { getDisplayName, getSeenRelays } from "applesauce-core/helpers";
 import { eventStore } from "@/lib/nostr";
 import { stripEmojis } from "@/lib/utils";
-import type { NostrEvent } from "applesauce-core/interfaces";
-import { use$ } from "applesauce-react";
+import type { NostrEvent } from "nostr-tools/pure";
+import { use$ } from "applesauce-react/hooks";
 import { useMemo } from "react";
 
 interface FloatingNoteProps {

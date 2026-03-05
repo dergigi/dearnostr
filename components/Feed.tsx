@@ -2,12 +2,12 @@
 
 import { mapEventsToStore, mapEventsToTimeline } from "applesauce-core";
 import { onlyEvents } from "applesauce-relay";
-import { use$ } from "applesauce-react";
+import { use$ } from "applesauce-react/hooks";
 import { pool, eventStore } from "@/lib/nostr";
 import { DEFAULT_RELAYS, DEAR_NOSTR_HASHTAG } from "@/lib/constants";
 import { merge, map, startWith } from "rxjs";
 import { useEffect, useMemo, useState } from "react";
-import type { NostrEvent } from "applesauce-core/interfaces";
+import type { NostrEvent } from "nostr-tools/pure";
 import FloatingNote from "./FloatingNote";
 import NoteModal from "./NoteModal";
 
