@@ -1,57 +1,37 @@
 import { EventStore } from "applesauce-core";
 import { EventFactory } from "applesauce-factory";
-import { createAddressLoader } from "applesauce-loaders/loaders";
+import { createEventLoaderForStore } from "applesauce-loaders/loaders";
 import { RelayPool } from "applesauce-relay";
-import { ExtensionSigner, ISigner } from "applesauce-signers";
+import { ExtensionSigner } from "applesauce-signers";
 import { DEFAULT_RELAYS } from "./constants";
 
 // Create singleton instances
 export const pool = new RelayPool();
 export const eventStore = new EventStore();
 
-// Create address loader for automatically fetching profiles and other replaceable events
-const addressLoader = createAddressLoader(pool, {
-  eventStore,
+// Connect the event store to the relay pool for automatic event loading
+createEventLoaderForStore(eventStore, pool, {
   lookupRelays: DEFAULT_RELAYS,
 });
 
-// Assign loaders to event store so profiles are automatically fetched when requested
-eventStore.addressableLoader = addressLoader;
-eventStore.replaceableLoader = addressLoader;
+// Initialize signer and factory
+// Signer is optional until user logs in with extension
+export const factory = new EventFactory({
+  signer: typeof window !== "undefined" && window.nostr ? new ExtensionSigner() : undefined,
+});
 
-// Relays are created lazily when accessed via pool.relay(url)
-// No need to pre-initialize them
-
-// Create factory with extension signer
-let signer: ExtensionSigner | null = null;
-let factory: EventFactory | null = null;
-
-export function getSigner(): ExtensionSigner | null {
-  if (typeof window === "undefined") return null;
-  
-  if (!signer && window.nostr) {
-    signer = new ExtensionSigner();
-  }
-  
-  return signer;
+export function getSigner(): ExtensionSigner | undefined {
+  return factory.context.signer as ExtensionSigner | undefined;
 }
 
 export function getFactory(): EventFactory {
-  if (!factory) {
-    const currentSigner = getSigner();
-    factory = new EventFactory({
-      signer: currentSigner || undefined,
-    });
-  }
-  
   return factory;
 }
 
 export function updateFactorySigner() {
-  const currentSigner = getSigner();
-  factory = new EventFactory({
-    signer: currentSigner || undefined,
-  });
+  if (typeof window !== "undefined" && window.nostr) {
+    factory.context.signer = new ExtensionSigner();
+  }
 }
 
 // Helper to publish events

@@ -2,12 +2,12 @@
 
 import { mapEventsToStore, mapEventsToTimeline } from "applesauce-core";
 import { onlyEvents } from "applesauce-relay";
-import { useObservableMemo } from "applesauce-react/hooks";
+import { use$ } from "applesauce-react/hooks";
 import { pool, eventStore } from "@/lib/nostr";
 import { DEFAULT_RELAYS, DEAR_NOSTR_HASHTAG } from "@/lib/constants";
 import { merge, map, startWith } from "rxjs";
 import { useEffect, useMemo, useState } from "react";
-import { NostrEvent } from "nostr-tools";
+import type { NostrEvent } from "nostr-tools/pure";
 import FloatingNote from "./FloatingNote";
 import NoteModal from "./NoteModal";
 
@@ -32,26 +32,28 @@ export default function Feed() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const events = useObservableMemo(() => {
-    const filter = {
-      kinds: [1],
-      "#t": [DEAR_NOSTR_HASHTAG.toLowerCase()],
-      limit: 100,
-    };
-    
-    const subscriptions = DEFAULT_RELAYS.map((relayUrl) => {
-      const relay = pool.relay(relayUrl);
-      return relay.subscription(filter);
-    });
+  const events = use$(
+    useMemo(() => {
+      const filter = {
+        kinds: [1],
+        "#t": [DEAR_NOSTR_HASHTAG.toLowerCase()],
+        limit: 100,
+      };
+      
+      const subscriptions = DEFAULT_RELAYS.map((relayUrl) => {
+        const relay = pool.relay(relayUrl);
+        return relay.subscription(filter);
+      });
 
-    return merge(...subscriptions).pipe(
-      onlyEvents(),
-      mapEventsToStore(eventStore),
-      mapEventsToTimeline(),
-      map((timeline) => [...timeline]),
-      startWith([])
-    );
-  }, []);
+      return merge(...subscriptions).pipe(
+        onlyEvents(),
+        mapEventsToStore(eventStore),
+        mapEventsToTimeline(),
+        map((timeline) => [...timeline]),
+        startWith([])
+      );
+    }, [])
+  );
 
   const loading = events === undefined;
   const eventsArray = useMemo(() => Array.isArray(events) ? events : [], [events]);

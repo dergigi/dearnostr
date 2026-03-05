@@ -3,7 +3,7 @@
 import { NoteBlueprint } from "applesauce-factory/blueprints";
 import { getFactory, publishEvent, eventStore } from "@/lib/nostr";
 import { getDisplayName } from "applesauce-core/helpers";
-import { useObservableMemo } from "applesauce-react/hooks";
+import { use$ } from "applesauce-react/hooks";
 import { stripEmojis } from "@/lib/utils";
 import { DEAR_NOSTR_PREFIX, DEAR_NOSTR_HASHTAG } from "@/lib/constants";
 import { useState, useRef, useEffect, useMemo } from "react";
@@ -26,10 +26,7 @@ export default function PostForm({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Fetch profile for logged-in user
-  const profile = useObservableMemo(
-    () => pubkey ? eventStore.profile({ pubkey }) : undefined,
-    [pubkey]
-  );
+  const profile = use$(() => pubkey ? eventStore.profile({ pubkey }) : undefined, [pubkey]);
 
   const displayName = useMemo(() => {
     if (!pubkey) return '';
