@@ -20,7 +20,7 @@ export default function NoteModal({ note, onClose }: NoteModalProps) {
   }, [note]);
 
   const relays = useMemo(() => seenRelays && Array.from(seenRelays), [seenRelays]);
-  const profile = use$(note ? eventStore.profile({ pubkey: note.pubkey, relays }) : undefined);
+  const profile = use$(() => note ? eventStore.profile({ pubkey: note.pubkey, relays }) : undefined, [note]);
 
   const day = useMemo(
     () => note ? new Date(note.created_at * 1000).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }) : '',

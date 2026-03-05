@@ -26,7 +26,7 @@ export default function PostForm({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Fetch profile for logged-in user
-  const profile = use$(pubkey ? eventStore.profile({ pubkey }) : undefined);
+  const profile = use$(() => pubkey ? eventStore.profile({ pubkey }) : undefined, [pubkey]);
 
   const displayName = useMemo(() => {
     if (!pubkey) return '';

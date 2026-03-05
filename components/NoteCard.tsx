@@ -13,7 +13,7 @@ export default function NoteCard({ note }: { note: NostrEvent }) {
   }, [note]);
 
   const relays = useMemo(() => seenRelays && Array.from(seenRelays), [seenRelays]);
-  const profile = use$(eventStore.profile({ pubkey: note.pubkey, relays }));
+  const profile = use$(() => eventStore.profile({ pubkey: note.pubkey, relays }), [note]);
 
   const displayNameRaw = getDisplayName(profile, note.pubkey.slice(0, 8) + "...");
   const displayName = useMemo(() => stripEmojis(displayNameRaw), [displayNameRaw]);
